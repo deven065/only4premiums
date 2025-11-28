@@ -1,4 +1,4 @@
-import { Mail, Send } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -23,10 +23,12 @@ export default function Footer() {
               Premium software subscriptions at unbeatable prices. Empowering professionals worldwide.
             </p>
             <div className="flex space-x-2 sm:space-x-3">
-              <a href="https://t.me/only4premiums_support" target="_blank" rel="noopener noreferrer" className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-800 hover:bg-purple-600 rounded-lg flex items-center justify-center hover:scale-105 transition-all">
-                <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
+              <a href="https://t.me/only4premiums_support" target="_blank" rel="noopener noreferrer" className="w-9 h-9 sm:w-10 sm:h-10 bg-[#0088cc] hover:bg-[#0077b5] rounded-lg flex items-center justify-center hover:scale-105 transition-all" aria-label="Telegram">
+                <svg className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 240 240" fill="white">
+                  <path d="M94.9297 148.838L91.3906 195.273C96.5156 195.273 98.7656 193.023 101.516 190.273L123.141 169.398L167.766 202.023C176.391 206.773 182.641 204.398 185.016 193.898L215.891 64.3984L215.953 64.3359C218.703 51.2734 211.203 46.5234 202.828 49.8984L28.8281 118.148C16.2656 123.148 16.3281 130.523 26.9531 133.898L69.2031 147.648L173.516 84.6484C178.391 81.5234 182.891 83.3984 179.266 86.5234"/>
+                </svg>
               </a>
-              <a href="mailto:contact@only4premioums.com" className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-800 hover:bg-purple-600 rounded-lg flex items-center justify-center hover:scale-105 transition-all">
+              <a href="mailto:contact@only4premioums.com" className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-800 hover:bg-purple-600 rounded-lg flex items-center justify-center hover:scale-105 transition-all" aria-label="Email">
                 <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
               </a>
             </div>

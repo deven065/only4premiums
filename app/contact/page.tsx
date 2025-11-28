@@ -1,6 +1,6 @@
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { Mail, Send, Clock, MapPin } from 'lucide-react'
+import { Mail, Clock, MapPin } from 'lucide-react'
 
 export default function ContactPage() {
   return (
@@ -93,8 +93,10 @@ export default function ContactPage() {
             {/* Contact Form or Image */}
             <div className="bg-linear-to-br from-purple-50 to-blue-50 rounded-3xl p-8 lg:p-12 flex flex-col justify-center items-center text-center">
               <div className="mb-6">
-                <div className="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Send className="h-10 w-10 text-white" />
+                <div className="w-20 h-20 bg-[#0088cc] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="h-10 w-10" viewBox="0 0 240 240" fill="white">
+                    <path d="M94.9297 148.838L91.3906 195.273C96.5156 195.273 98.7656 193.023 101.516 190.273L123.141 169.398L167.766 202.023C176.391 206.773 182.641 204.398 185.016 193.898L215.891 64.3984L215.953 64.3359C218.703 51.2734 211.203 46.5234 202.828 49.8984L28.8281 118.148C16.2656 123.148 16.3281 130.523 26.9531 133.898L69.2031 147.648L173.516 84.6484C178.391 81.5234 182.891 83.3984 179.266 86.5234"/>
+                  </svg>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">
                   Quick Support
@@ -118,7 +120,9 @@ export default function ContactPage() {
                   rel="noopener noreferrer"
                   className="block w-full bg-[#0088cc] hover:bg-[#0077b5] text-white font-semibold py-4 px-6 rounded-xl transition-colors"
                 >
-                  <Send className="inline h-5 w-5 mr-2" />
+                  <svg className="inline h-5 w-5 mr-2" viewBox="0 0 240 240" fill="white">
+                    <path d="M94.9297 148.838L91.3906 195.273C96.5156 195.273 98.7656 193.023 101.516 190.273L123.141 169.398L167.766 202.023C176.391 206.773 182.641 204.398 185.016 193.898L215.891 64.3984L215.953 64.3359C218.703 51.2734 211.203 46.5234 202.828 49.8984L28.8281 118.148C16.2656 123.148 16.3281 130.523 26.9531 133.898L69.2031 147.648L173.516 84.6484C178.391 81.5234 182.891 83.3984 179.266 86.5234"/>
+                  </svg>
                   Telegram Chat
                 </a>
               </div>
