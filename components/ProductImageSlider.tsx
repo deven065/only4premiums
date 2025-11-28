@@ -34,13 +34,13 @@ export default function ProductImageSlider({ images, productName }: ProductImage
   if (!images || images.length === 0) return null
 
   return (
-    <div className="mb-12">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Screenshots</h2>
+    <div className="mb-8 sm:mb-10 md:mb-12">
+      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Product Screenshots</h2>
       
-      <div className="relative bg-gray-50 rounded-2xl overflow-hidden">
+      <div className="relative bg-gray-50 rounded-xl sm:rounded-2xl overflow-hidden">
         {/* Main Image */}
         <div 
-          className="relative h-96 lg:h-[500px] overflow-hidden cursor-zoom-in"
+          className="relative h-56 sm:h-72 md:h-80 lg:h-96 xl:h-[500px] overflow-hidden cursor-zoom-in"
           onMouseEnter={() => setIsZoomed(true)}
           onMouseLeave={() => setIsZoomed(false)}
           onMouseMove={handleMouseMove}
@@ -63,32 +63,32 @@ export default function ProductImageSlider({ images, productName }: ProductImage
           <>
             <button
               onClick={goToPrevious}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110"
               aria-label="Previous image"
             >
-              <ChevronLeft className="h-6 w-6 text-gray-800" />
+              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-gray-800" />
             </button>
             <button
               onClick={goToNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110"
               aria-label="Next image"
             >
-              <ChevronRight className="h-6 w-6 text-gray-800" />
+              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-gray-800" />
             </button>
           </>
         )}
 
         {/* Indicators */}
         {images.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+          <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex space-x-1.5 sm:space-x-2">
             {images.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`h-2 rounded-full transition-all ${
+                className={`h-1.5 sm:h-2 rounded-full transition-all ${
                   index === currentIndex 
-                    ? 'w-8 bg-purple-600' 
-                    : 'w-2 bg-gray-300 hover:bg-gray-400'
+                    ? 'w-6 sm:w-8 bg-purple-600' 
+                    : 'w-1.5 sm:w-2 bg-gray-300 hover:bg-gray-400'
                 }`}
                 aria-label={`Go to image ${index + 1}`}
               />
@@ -99,12 +99,12 @@ export default function ProductImageSlider({ images, productName }: ProductImage
 
       {/* Thumbnail Navigation */}
       {images.length > 1 && (
-        <div className="mt-4 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+        <div className="mt-3 sm:mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 sm:gap-3">
           {images.map((image, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`relative h-20 rounded-lg overflow-hidden border-2 transition-all ${
+              className={`relative h-16 sm:h-20 rounded-md sm:rounded-lg overflow-hidden border-2 transition-all ${
                 index === currentIndex 
                   ? 'border-purple-600 ring-2 ring-purple-200' 
                   : 'border-gray-200 hover:border-purple-300'

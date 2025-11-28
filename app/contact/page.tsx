@@ -7,29 +7,29 @@ export default function ContactPage() {
     <div className="min-h-screen bg-white">
       <Header />
       
-      <main className="pt-32 pb-16">
-        <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+      <main className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+          <div className="text-center mb-8 sm:mb-10 md:mb-12">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
               Contact Us
             </h1>
-            <p className="text-xl text-gray-600">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 px-4">
               Get in touch with us. We&apos;re here to help you 24/7
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
             {/* Contact Information */}
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Get In Touch</h2>
-                <p className="text-gray-600 mb-8">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Get In Touch</h2>
+                <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
                   Have questions about our products or services? Reach out to us through any of these channels and we&apos;ll get back to you as soon as possible.
                 </p>
               </div>
 
               {/* Contact Methods */}
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Gmail */}
                 <a 
                   href="mailto:contact@only4premiums.com"

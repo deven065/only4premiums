@@ -298,10 +298,10 @@ export default function ProductPage() {
             <span className="font-medium">Back to Products</span>
           </button>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 mb-12 sm:mb-16">
             {/* Product Image */}
             <div className="relative">
-              <div className="relative bg-gray-50 rounded-2xl overflow-hidden h-96 lg:h-[500px]">
+              <div className="relative bg-gray-50 rounded-xl sm:rounded-2xl overflow-hidden h-64 sm:h-80 md:h-96 lg:h-[500px]">
                 <Image 
                   src={product.image} 
                   alt={product.name}
@@ -313,7 +313,7 @@ export default function ProductPage() {
               
               {/* Image Slider Below Main Product Image */}
               {product.screenshots && product.screenshots.length > 0 && (
-                <div className="mt-8">
+                <div className="mt-4 sm:mt-6 md:mt-8">
                   <ProductImageSlider images={product.screenshots} productName={product.name} />
                 </div>
               )}
@@ -321,17 +321,17 @@ export default function ProductPage() {
 
             {/* Product Info */}
             <div>
-              <span className="inline-block text-sm text-purple-600 font-semibold bg-purple-50 px-4 py-2 rounded-full mb-4">
+              <span className="inline-block text-xs sm:text-sm text-purple-600 font-semibold bg-purple-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-3 sm:mb-4">
                 {product.category}
               </span>
               
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
                 {product.name}
               </h1>
 
               <ProductRating rating={product.rating} reviews={product.reviews} />
 
-              <p className="text-lg text-gray-600 leading-relaxed mb-8">
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed mb-6 sm:mb-8">
                 {product.description}
               </p>
 

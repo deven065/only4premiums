@@ -29,17 +29,17 @@ export default function Header() {
         ? 'bg-white/95 backdrop-blur-xl shadow-lg border-gray-200' 
         : 'bg-white/80 backdrop-blur-md shadow-sm border-gray-100'
     }`}>
-      <nav className="container mx-auto px-4 lg:px-8 py-4">
+      <nav className="container mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
         <div className="flex items-center justify-between">
-          <button onClick={() => router.push('/')} className="flex items-center space-x-3 group cursor-pointer">
+          <button onClick={() => router.push('/')} className="flex items-center space-x-2 sm:space-x-3 group cursor-pointer">
             <Image 
               src="/only4premiums.png" 
               alt="Only4Premiums Logo" 
-              width={40} 
-              height={40}
-              className="group-hover:scale-110 transition-all duration-300 group-hover:rotate-3"
+              width={32} 
+              height={32}
+              className="sm:w-10 sm:h-10 group-hover:scale-110 transition-all duration-300 group-hover:rotate-3"
             />
-            <span className="text-2xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">
+            <span className="text-lg sm:text-xl md:text-2xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">
               Only4Premiums
             </span>
           </button>

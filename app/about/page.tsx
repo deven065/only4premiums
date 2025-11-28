@@ -6,20 +6,20 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white">
       <Header />
       
-      <main className="pt-32 pb-16">
-        <div className="container mx-auto px-4 lg:px-8 max-w-4xl">
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-12">
+      <main className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-8 sm:mb-10 md:mb-12">
             About us
           </h1>
 
           <div className="prose prose-lg max-w-none">
-            <p className="text-xl text-gray-700 leading-relaxed mb-8">
+            <p className="text-base sm:text-lg md:text-xl text-gray-700 leading-relaxed mb-6 sm:mb-8">
               Hi, I&apos;m Sandeep, and welcome to Only4Premiums! I&apos;m committed to selling premium subscriptions affordable for all.. That&apos;s why I&apos;ve created this platform where you can unlock the full potential of your favorite subscriptions. Whether you&apos;re a student, a professional, or just someone who loves using a subscription, I&apos;ve got you covered with unbeatable deals on premium subscriptions. Explore Only4Premiums and experience the difference!
             </p>
 
-            <div className="mt-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h2>
-              <div className="flex items-center space-x-6">
+            <div className="mt-8 sm:mt-10 md:mt-12">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Get in Touch</h2>
+              <div className="flex items-center space-x-4 sm:space-x-6">
                 <a 
                   href="mailto:contact@only4premiums.com"
                   className="flex items-center justify-center w-16 h-16 bg-white rounded-full hover:shadow-lg transition-all"
