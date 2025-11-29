@@ -34,7 +34,7 @@ export default function AboutPage() {
                   </svg>
                 </a>
                 <a 
-                  href="https://t.me/only4premiums"
+                  href="https://t.me/only4premiums_support"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center w-16 h-16 bg-[#0088cc] rounded-full hover:opacity-90 transition-opacity"

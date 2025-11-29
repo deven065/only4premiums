@@ -18,11 +18,6 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const navigateToProducts = () => {
-    router.push('/products')
-    setIsMenuOpen(false)
-  }
-
   return (
     <header className={`fixed top-0 w-full z-50 border-b transition-all duration-300 ${
       scrolled 
@@ -50,10 +45,6 @@ export default function Header() {
               Home
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-600 group-hover:w-full transition-all duration-300"></span>
             </button>
-            <button onClick={navigateToProducts} className="text-gray-700 hover:text-purple-600 transition-all duration-200 px-4 py-2 rounded-lg hover:bg-purple-50 font-medium relative group">
-              Products
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-600 group-hover:w-full transition-all duration-300"></span>
-            </button>
             <button onClick={() => { router.push('/about'); setIsMenuOpen(false); }} className="text-gray-700 hover:text-purple-600 transition-all duration-200 px-4 py-2 rounded-lg hover:bg-purple-50 font-medium relative group">
               About
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-600 group-hover:w-full transition-all duration-300"></span>
@@ -61,12 +52,6 @@ export default function Header() {
             <button onClick={() => { router.push('/contact'); setIsMenuOpen(false); }} className="text-gray-700 hover:text-purple-600 transition-all duration-200 px-4 py-2 rounded-lg hover:bg-purple-50 font-medium relative group">
               Contact
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-600 group-hover:w-full transition-all duration-300"></span>
-            </button>
-            <button 
-              onClick={navigateToProducts}
-              className="ml-4 bg-linear-to-r from-purple-600 to-pink-600 text-white px-6 py-2.5 rounded-full hover:shadow-xl hover:shadow-purple-500/50 hover:scale-105 transition-all duration-300 font-semibold active:scale-95"
-            >
-              Get Started
             </button>
           </div>
 
@@ -84,9 +69,6 @@ export default function Header() {
           <div className="md:hidden mt-4 pb-4 space-y-2 animate-fadeInUp">
             <button onClick={() => { router.push('/'); setIsMenuOpen(false); }} className="block w-full text-left text-gray-700 hover:text-purple-600 hover:bg-purple-50 px-4 py-3 rounded-lg transition-all duration-200">
               Home
-            </button>
-            <button onClick={navigateToProducts} className="block w-full text-left text-gray-700 hover:text-purple-600 hover:bg-purple-50 px-4 py-3 rounded-lg transition-all duration-200">
-              Products
             </button>
             <button onClick={() => { router.push('/about'); setIsMenuOpen(false); }} className="block w-full text-left text-gray-700 hover:text-purple-600 hover:bg-purple-50 px-4 py-3 rounded-lg transition-all duration-200">
               About

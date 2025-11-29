@@ -41,7 +41,7 @@ export default function HowToBuy() {
             </svg>
             <span className="font-medium">Chat on WhatsApp</span>
           </a>
-          <a href="https://t.me/only4premiums" target="_blank" rel="noopener noreferrer" className="inline-flex items-center space-x-2 bg-[#0088cc] hover:bg-[#0077b5] text-white px-6 py-3 rounded-full transition-all hover:scale-105 shadow-sm">
+          <a href="https://t.me/only4premiums_support" target="_blank" rel="noopener noreferrer" className="inline-flex items-center space-x-2 bg-[#0088cc] hover:bg-[#0077b5] text-white px-6 py-3 rounded-full transition-all hover:scale-105 shadow-sm">
             <svg className="h-5 w-5" viewBox="0 0 240 240" fill="white">
               <path d="M94.9297 148.838L91.3906 195.273C96.5156 195.273 98.7656 193.023 101.516 190.273L123.141 169.398L167.766 202.023C176.391 206.773 182.641 204.398 185.016 193.898L215.891 64.3984L215.953 64.3359C218.703 51.2734 211.203 46.5234 202.828 49.8984L28.8281 118.148C16.2656 123.148 16.3281 130.523 26.9531 133.898L69.2031 147.648L173.516 84.6484C178.391 81.5234 182.891 83.3984 179.266 86.5234"/>
             </svg>

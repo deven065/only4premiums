@@ -53,7 +53,7 @@ export default function ContactPage() {
 
                 {/* Telegram */}
                 <a 
-                  href="https://t.me/only4premiums"
+                  href="https://t.me/only4premiums_support"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start space-x-4 p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group"
@@ -66,7 +66,7 @@ export default function ContactPage() {
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">Chat on Telegram</h3>
                     <p className="text-gray-600 text-sm mb-2">Instant messaging support</p>
-                    <p className="text-[#0088cc] font-medium">@only4premiums</p>
+                    <p className="text-[#0088cc] font-medium">@only4premiums_support</p>
                   </div>
                 </a>
               </div>
@@ -115,7 +115,7 @@ export default function ContactPage() {
                   Email Support
                 </a>
                 <a 
-                  href="https://t.me/only4premiums"
+                  href="https://t.me/only4premiums_support"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block w-full bg-[#0088cc] hover:bg-[#0077b5] text-white font-semibold py-4 px-6 rounded-xl transition-colors"
