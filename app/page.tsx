@@ -170,6 +170,16 @@ export default function Home() {
   ]
 
   const [reviews, setReviews] = useState<Review[]>(initialReviews)
+  const [reviewImages, setReviewImages] = useState<string[]>([
+    '/TradingView.png',
+    '/TradingView.png',
+    '/TradingView.png',
+    '/TradingView.png',
+    '/TradingView.png',
+    '/TradingView.png',
+    '/TradingView.png',
+    '/TradingView.png'
+  ])
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
@@ -178,6 +188,10 @@ export default function Home() {
 
   const handleNewReview = (newReview: Review) => {
     setReviews(prev => [newReview, ...prev])
+  }
+
+  const handleAddPhoto = (photoUrl: string) => {
+    setReviewImages(prev => [...prev, photoUrl])
   }
 
   const nextImage = () => {
@@ -220,29 +234,35 @@ export default function Home() {
       <Header />
       
       {/* Trust Banner */}
-      <div className="bg-gray-800 text-white py-2 sm:py-3 mt-16 sm:mt-20">
+      <div className="bg-gray-900 border-y border-gray-700 py-2.5 sm:py-3 mt-16 sm:mt-20">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm font-medium overflow-x-auto">
-            <span className="flex items-center gap-1.5 whitespace-nowrap">
-              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-              </svg>
-              <span className="hidden sm:inline">100% Secure Payment</span>
-              <span className="sm:hidden">Secure</span>
-            </span>
-            <span className="flex items-center gap-1.5 whitespace-nowrap">
-              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-              </svg>
-              <span className="hidden sm:inline">Instant Delivery</span>
-              <span className="sm:hidden">Instant</span>
-            </span>
-            <span className="flex items-center gap-1.5 whitespace-nowrap">
-              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
-              </svg>
-              24/7 Support
-            </span>
+          <div className="flex items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm overflow-x-auto">
+            <div className="flex items-center gap-1.5 text-white whitespace-nowrap">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                </svg>
+              </div>
+              <span className="font-medium">Secure</span>
+            </div>
+            <div className="w-px h-6 bg-gray-700 hidden sm:block"></div>
+            <div className="flex items-center gap-1.5 text-white whitespace-nowrap">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                </svg>
+              </div>
+              <span className="font-medium">Instant</span>
+            </div>
+            <div className="w-px h-6 bg-gray-700 hidden sm:block"></div>
+            <div className="flex items-center gap-1.5 text-white whitespace-nowrap">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
+                </svg>
+              </div>
+              <span className="font-medium">24/7 Support</span>
+            </div>
           </div>
         </div>
       </div>
@@ -352,7 +372,7 @@ export default function Home() {
             <div className="container mx-auto">
               <CustomerReviews 
               rating={4.9}
-              totalReviews={76}
+              totalReviews={reviews.length}
               ratingBreakdown={{
                 5: 72,
                 4: 4,
@@ -360,16 +380,7 @@ export default function Home() {
                 2: 0,
                 1: 0
               }}
-              reviewImages={[
-                '/TradingView.png',
-                '/TradingView.png',
-                '/TradingView.png',
-                '/TradingView.png',
-                '/TradingView.png',
-                '/TradingView.png',
-                '/TradingView.png',
-                '/TradingView.png'
-              ]}
+              reviewImages={reviewImages}
               reviews={reviews}
             />
             </div>
@@ -378,7 +389,7 @@ export default function Home() {
           {/* Leave a Review Section */}
           <div className="-mx-4 sm:mx-0 mb-16 bg-white py-8 px-4 sm:px-8">
             <div className="container mx-auto">
-              <LeaveReview onSubmit={handleNewReview} />
+              <LeaveReview onSubmit={handleNewReview} onAddPhoto={handleAddPhoto} />
             </div>
           </div>
 

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Star } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { Star, Camera, MessageSquare } from 'lucide-react'
 
 interface Review {
   name: string
@@ -15,18 +15,49 @@ interface Review {
 
 interface LeaveReviewProps {
   onSubmit: (review: Review) => void
+  onAddPhoto?: (photoUrl: string) => void
 }
 
-export default function LeaveReview({ onSubmit }: LeaveReviewProps) {
+export default function LeaveReview({ onSubmit, onAddPhoto }: LeaveReviewProps) {
   const [rating, setRating] = useState(0)
   const [hoveredRating, setHoveredRating] = useState(0)
   const [review, setReview] = useState('')
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
+  const [uploadedImages, setUploadedImages] = useState<string[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files && files.length > 0) {
+      const file = files[0]
+      const reader = new FileReader()
+      
+      reader.onloadend = () => {
+        const imageUrl = reader.result as string
+        setUploadedImages(prev => [...prev, imageUrl])
+        if (onAddPhoto) {
+          onAddPhoto(imageUrl)
+        }
+        alert('Photo added successfully to Image Review!')
+      }
+      
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleAddPhotoClick = () => {
+    fileInputRef.current?.click()
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
+    if (rating === 0) {
+      alert('Please select a rating!')
+      return
+    }
+
     const newReview: Review = {
       name: fullName,
       location: 'INDIA',
@@ -39,7 +70,8 @@ export default function LeaveReview({ onSubmit }: LeaveReviewProps) {
         hour: '2-digit',
         minute: '2-digit'
       }).replace(',', ''),
-      verified: true
+      verified: true,
+      images: uploadedImages.length > 0 ? uploadedImages : undefined
     }
 
     onSubmit(newReview)
@@ -49,6 +81,7 @@ export default function LeaveReview({ onSubmit }: LeaveReviewProps) {
     setReview('')
     setFullName('')
     setPhone('')
+    setUploadedImages([])
     
     // Show success message
     alert('Thank you for your review! Your review has been submitted successfully.')
@@ -121,13 +154,48 @@ export default function LeaveReview({ onSubmit }: LeaveReviewProps) {
             />
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-gray-900 hover:bg-black text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-          >
-            Submit Review
-          </button>
+          {/* Action Buttons - Add Photo and Product Review */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={handleAddPhotoClick}
+              className="flex items-center justify-center space-x-2 bg-white hover:bg-gray-50 text-gray-900 font-semibold py-3 px-6 border-2 border-gray-900 transition-colors"
+            >
+              <Camera className="h-5 w-5" />
+              <span>Add Photo</span>
+            </button>
+            <button
+              type="submit"
+              className="flex items-center justify-center space-x-2 bg-gray-900 hover:bg-black text-white font-semibold py-3 px-6 transition-colors"
+            >
+              <MessageSquare className="h-5 w-5" />
+              <span>Product Review</span>
+            </button>
+          </div>
+
+          {/* Hidden File Input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoUpload}
+            className="hidden"
+          />
+
+          {/* Show uploaded images preview */}
+          {uploadedImages.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-600 mb-2">Uploaded images ({uploadedImages.length}):</p>
+              <div className="flex gap-2 flex-wrap">
+                {uploadedImages.map((img, idx) => (
+                  <div key={idx} className="relative w-20 h-20 border border-gray-300 rounded overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img} alt={`Upload ${idx + 1}`} className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </form>
       </div>
     </div>
