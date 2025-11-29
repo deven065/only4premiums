@@ -48,23 +48,23 @@ export default function CustomerReviews({
       'bg-yellow-400 text-black',
       'bg-blue-400 text-white',
       'bg-green-400 text-black',
-      'bg-purple-400 text-white',
-      'bg-pink-400 text-white',
-      'bg-orange-400 text-black'
+      'bg-blue-500 text-white',
+      'bg-green-500 text-white',
+      'bg-red-500 text-white'
     ]
     const index = name.charCodeAt(0) % colors.length
     return colors[index]
   }
 
   return (
-    <div className="mb-16">
-      <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-12">
+    <div className="mb-12">
+      <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-8">
         Customer - reviews
       </h2>
 
       <div className="max-w-6xl mx-auto">
         {/* Rating Summary */}
-        <div className="bg-white rounded-3xl border-2 border-gray-100 p-8 lg:p-12 mb-8">
+        <div className="bg-white border border-gray-300 p-6 lg:p-8 mb-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Left Side - Overall Rating */}
             <div className="flex flex-col items-center justify-center text-center">
@@ -112,15 +112,15 @@ export default function CustomerReviews({
 
         {/* Image Review Gallery */}
         {reviewImages.length > 0 && (
-          <section className="mb-12">
-            <h3 className="text-black text-3xl font-semibold text-center mb-6">Image Review</h3>
+          <section className="mb-8">
+            <h3 className="text-black text-2xl font-semibold text-center mb-4">Image Review</h3>
 
             <div className="mx-auto max-w-full px-4">
               <div className="grid grid-cols-5 gap-2">
                 {reviewImages.map((img, idx) => (
                   <div
                     key={idx}
-                    className="rounded-lg overflow-hidden border border-gray-300"
+                    className="overflow-hidden border border-gray-300"
                   >
                     <div className="relative w-full aspect-square">
                       <Image
@@ -142,7 +142,7 @@ export default function CustomerReviews({
           {displayedReviews.map((review, idx) => (
             <div 
               key={idx}
-              className="bg-white rounded-xl border-2 border-gray-100 p-6 hover:border-purple-200 transition-colors"
+              className="bg-white border-t border-gray-200 p-6 first:border-t-0"
             >
               <div className="flex items-start space-x-4">
                 {/* Avatar */}
@@ -202,7 +202,7 @@ export default function CustomerReviews({
 
           {/* See More Button */}
           {hasMore && (
-            <div className="flex justify-center mt-8">
+            <div className="flex justify-center mt-6">
               <button
                 onClick={() => setVisibleCount(prev => prev + 4)}
                 className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-full transition-all flex items-center space-x-2"

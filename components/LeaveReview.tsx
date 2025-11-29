@@ -55,12 +55,12 @@ export default function LeaveReview({ onSubmit }: LeaveReviewProps) {
   }
 
   return (
-    <div className="mb-16">
-      <div className="max-w-2xl mx-auto bg-white rounded-2xl border border-gray-200 p-8 lg:p-10">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">
-          Leave a Review
-        </h2>
+    <div className="mb-12">
+      <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-8">
+        Leave a Review
+      </h2>
 
+      <div className="max-w-6xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Star Rating */}
           <div className="text-center">
@@ -124,7 +124,7 @@ export default function LeaveReview({ onSubmit }: LeaveReviewProps) {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="w-full bg-gray-900 hover:bg-black text-white font-semibold py-3 px-6 rounded-lg transition-colors"
           >
             Submit Review
           </button>

@@ -25,30 +25,30 @@ export default function ProductFAQ({ faqs }: ProductFAQProps) {
         Frequently Asked Questions
       </h2>
 
-      <div className="max-w-3xl mx-auto space-y-4">
+      <div className="max-w-3xl mx-auto space-y-3">
         {faqs.map((faq, index) => (
           <div 
             key={index}
-            className="bg-white border-2 border-gray-100 rounded-xl overflow-hidden hover:border-purple-200 transition-colors"
+            className="bg-white border-t border-gray-300 first:border-t-0 overflow-hidden"
           >
             <button
               onClick={() => toggleFAQ(index)}
-              className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between p-5 text-left"
             >
-              <span className="font-semibold text-gray-900 pr-4">{faq.question}</span>
+              <span className="font-medium text-gray-900 pr-4 text-base">{faq.question}</span>
               <ChevronDown 
-                className={`h-5 w-5 text-red-500 shrink-0 transition-transform duration-300 ${
+                className={`h-5 w-5 text-red-500 shrink-0 transition-transform duration-200 ${
                   openIndex === index ? 'rotate-180' : ''
                 }`}
               />
             </button>
             
             <div 
-              className={`overflow-hidden transition-all duration-300 ${
+              className={`overflow-hidden transition-all duration-200 ${
                 openIndex === index ? 'max-h-96' : 'max-h-0'
               }`}
             >
-              <div className="px-6 pb-6 text-gray-600">
+              <div className="px-5 pb-5 text-gray-700 text-sm leading-relaxed">
                 {faq.answer}
               </div>
             </div>

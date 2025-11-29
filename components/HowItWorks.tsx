@@ -46,7 +46,7 @@ export default function HowItWorks() {
                 <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-0.5 bg-gray-200 z-0" />
               )}
               
-              <div className="relative bg-white p-8 rounded-2xl border-2 border-gray-100 hover:border-purple-200 transition-all hover:shadow-xl z-10">
+              <div className="relative bg-white p-8 rounded-2xl border border-gray-200 transition-all hover:shadow-xl z-10">
                 {/* Step Number */}
                 <div className="absolute -top-4 -right-4 w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">
                   {index + 1}

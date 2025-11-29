@@ -37,7 +37,7 @@ export default function ProductImageSlider({ images, productName }: ProductImage
     <div className="mb-8 sm:mb-10 md:mb-12">
       <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Product Screenshots</h2>
       
-      <div className="relative bg-gray-50 rounded-xl sm:rounded-2xl overflow-hidden">
+      <div className="relative bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-gray-200">
         {/* Main Image */}
         <div 
           className="relative h-56 sm:h-72 md:h-80 lg:h-96 xl:h-[500px] overflow-hidden cursor-zoom-in"

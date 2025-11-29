@@ -41,39 +41,36 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            <button onClick={() => router.push('/')} className="text-gray-700 hover:text-purple-600 transition-all duration-200 px-4 py-2 rounded-lg hover:bg-purple-50 font-medium relative group">
+            <button onClick={() => router.push('/')} className="text-gray-700 hover:text-gray-900 transition-all duration-200 px-4 py-2 font-medium">
               Home
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-600 group-hover:w-full transition-all duration-300"></span>
             </button>
-            <button onClick={() => { router.push('/about'); setIsMenuOpen(false); }} className="text-gray-700 hover:text-purple-600 transition-all duration-200 px-4 py-2 rounded-lg hover:bg-purple-50 font-medium relative group">
+            <button onClick={() => { router.push('/about'); setIsMenuOpen(false); }} className="text-gray-700 hover:text-gray-900 transition-all duration-200 px-4 py-2 font-medium">
               About
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-600 group-hover:w-full transition-all duration-300"></span>
             </button>
-            <button onClick={() => { router.push('/contact'); setIsMenuOpen(false); }} className="text-gray-700 hover:text-purple-600 transition-all duration-200 px-4 py-2 rounded-lg hover:bg-purple-50 font-medium relative group">
+            <button onClick={() => { router.push('/contact'); setIsMenuOpen(false); }} className="text-gray-700 hover:text-gray-900 transition-all duration-200 px-4 py-2 font-medium">
               Contact
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-600 group-hover:w-full transition-all duration-300"></span>
             </button>
           </div>
 
           {/* Mobile Menu Button */}
           <button 
-            className="md:hidden p-2 hover:bg-purple-50 rounded-lg transition-all duration-200"
+            className="md:hidden p-2 transition-all duration-200"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X className="h-6 w-6 text-purple-600" /> : <Menu className="h-6 w-6 text-gray-700" />}
+            {isMenuOpen ? <X className="h-6 w-6 text-gray-700" /> : <Menu className="h-6 w-6 text-gray-700" />}
           </button>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4 space-y-2 animate-fadeInUp">
-            <button onClick={() => { router.push('/'); setIsMenuOpen(false); }} className="block w-full text-left text-gray-700 hover:text-purple-600 hover:bg-purple-50 px-4 py-3 rounded-lg transition-all duration-200">
+            <button onClick={() => { router.push('/'); setIsMenuOpen(false); }} className="block w-full text-left text-gray-700 hover:text-gray-900 px-4 py-3 transition-all duration-200">
               Home
             </button>
-            <button onClick={() => { router.push('/about'); setIsMenuOpen(false); }} className="block w-full text-left text-gray-700 hover:text-purple-600 hover:bg-purple-50 px-4 py-3 rounded-lg transition-all duration-200">
+            <button onClick={() => { router.push('/about'); setIsMenuOpen(false); }} className="block w-full text-left text-gray-700 hover:text-gray-900 px-4 py-3 transition-all duration-200">
               About
             </button>
-            <button onClick={() => { router.push('/contact'); setIsMenuOpen(false); }} className="block w-full text-left text-gray-700 hover:text-purple-600 hover:bg-purple-50 px-4 py-3 rounded-lg transition-all duration-200">
+            <button onClick={() => { router.push('/contact'); setIsMenuOpen(false); }} className="block w-full text-left text-gray-700 hover:text-gray-900 px-4 py-3 transition-all duration-200">
               Contact
             </button>
           </div>

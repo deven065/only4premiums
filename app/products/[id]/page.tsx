@@ -301,7 +301,7 @@ export default function ProductPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 mb-12 sm:mb-16">
             {/* Product Image */}
             <div className="relative">
-              <div className="relative bg-gray-50 rounded-xl sm:rounded-2xl overflow-hidden h-64 sm:h-80 md:h-96 lg:h-[500px]">
+              <div className="relative bg-white rounded-xl sm:rounded-2xl overflow-hidden h-64 sm:h-80 md:h-96 lg:h-[500px] border border-gray-200">
                 <Image 
                   src={product.image} 
                   alt={product.name}

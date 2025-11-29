@@ -171,6 +171,8 @@ export default function Home() {
 
   const [reviews, setReviews] = useState<Review[]>(initialReviews)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [touchStart, setTouchStart] = useState(0)
+  const [touchEnd, setTouchEnd] = useState(0)
 
   const allImages = [product.image, ...product.screenshots]
 
@@ -186,8 +188,35 @@ export default function Home() {
     setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length)
   }
 
+  // Handle touch events for swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 50
+    const isRightSwipe = distance < -50
+
+    if (isLeftSwipe) {
+      nextImage()
+    }
+    if (isRightSwipe) {
+      prevImage()
+    }
+
+    setTouchStart(0)
+    setTouchEnd(0)
+  }
+
   return (
-    <div className="min-h-screen bg-linear-to-b from-white via-purple-50/30 to-white">
+    <div className="min-h-screen bg-white">
       <Header />
       
       {/* Trust Banner */}
@@ -219,70 +248,57 @@ export default function Home() {
       </div>
       
       <main className="pt-4 sm:pt-8 pb-8 sm:pb-16">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 lg:px-0">
           {/* Breadcrumb */}
-          <nav className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600 mb-4 sm:mb-8">
-            <Link href="/" className="hover:text-purple-600 transition-colors">Home</Link>
+          <nav className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600 mb-4 sm:mb-8 lg:px-4">
+            <Link href="/" className="hover:text-gray-900 transition-colors">Home</Link>
             <span>/</span>
             <span className="text-gray-900 font-medium">{product.name}</span>
           </nav>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-16">
             {/* Product Image Gallery */}
-            <div className="relative lg:sticky lg:top-28 h-fit w-full">
-              {/* Inner card container */}
-              <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-white shadow-xl">
-                {/* Make this the positioned container for the image + arrows */}
-                <div className="relative h-64 sm:h-80 md:h-[500px] lg:h-[600px] border border-gray-200 rounded-2xl sm:rounded-3xl overflow-visible">
-                  <Image 
-                    src={allImages[currentImageIndex]} 
-                    alt={`${product.name} - Image ${currentImageIndex + 1}`}
-                    fill
-                    className="object-contain transition-all duration-500"
-                    priority
-                  />
+            <div className="relative lg:sticky lg:top-20 h-fit w-screen lg:w-full -mx-4 lg:mx-0">
+              {/* Image container */}
+              <div 
+                className="relative h-[60vh] sm:h-[65vh] md:h-[70vh] lg:h-[75vh] bg-white overflow-hidden border border-gray-300"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <Image 
+                  src={allImages[currentImageIndex]} 
+                  alt={`${product.name} - Image ${currentImageIndex + 1}`}
+                  fill
+                  className="object-contain transition-all duration-500"
+                  priority
+                />
 
-                  {/* Image Counter */}
-                  <div className="absolute top-4 right-4 bg-black/80 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm z-40">
-                    {currentImageIndex + 1} / {allImages.length}
-                  </div>
-
-                  {/* inside the same relative image container (after the Image & counter) */}
-                  {allImages.length > 1 && (
-                    <div
-                      className="
-                        absolute inset-0 z-50 pointer-events-none
-                        flex items-center justify-between px-3
-                      "
-                    >
-                      <button
-                        onClick={prevImage}
-                        aria-label="Previous"
-                        className="
-                          pointer-events-auto
-                          w-10 h-10 rounded-full bg-white shadow-lg
-                          flex items-center justify-center text-gray-700
-                          hover:scale-105 transition-transform
-                        "
-                      >
-                        <ChevronLeft className="w-5 h-5" strokeWidth={2} />
-                      </button>
-
-                      <button
-                        onClick={nextImage}
-                        aria-label="Next"
-                        className="
-                          pointer-events-auto
-                          w-10 h-10 rounded-full bg-white shadow-lg
-                          flex items-center justify-center text-gray-700
-                          hover:scale-105 transition-transform
-                        "
-                      >
-                        <ChevronRight className="w-5 h-5" strokeWidth={2} />
-                      </button>
-                    </div>
-                  )}
+                {/* Image Counter */}
+                <div className="absolute top-4 right-4 bg-black/80 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm z-40">
+                  {currentImageIndex + 1} / {allImages.length}
                 </div>
+
+                {/* Arrow navigation */}
+                {allImages.length > 1 && (
+                  <div className="absolute inset-0 z-50 pointer-events-none flex items-center justify-between px-3">
+                    <button
+                      onClick={prevImage}
+                      aria-label="Previous"
+                      className="pointer-events-auto w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-700 hover:scale-105 transition-transform"
+                    >
+                      <ChevronLeft className="w-5 h-5" strokeWidth={2} />
+                    </button>
+
+                    <button
+                      onClick={nextImage}
+                      aria-label="Next"
+                      className="pointer-events-auto w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-700 hover:scale-105 transition-transform"
+                    >
+                      <ChevronRight className="w-5 h-5" strokeWidth={2} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -290,7 +306,7 @@ export default function Home() {
             <div className="space-y-4 sm:space-y-6">
               {/* Category Badge */}
               <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-700 font-semibold bg-gray-100 px-3 sm:px-4 py-1.5 sm:py-2 rounded border border-gray-200">
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-700 font-medium px-0">
                   <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
                   </svg>
@@ -303,7 +319,7 @@ export default function Home() {
               </div>
               
               {/* Product Title */}
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
                 {product.name}
               </h1>
 
@@ -311,8 +327,8 @@ export default function Home() {
               <ProductRating rating={product.rating} reviews={product.reviews} />
 
               {/* Description */}
-              <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-orange-500">
-                <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+              <div className="bg-white p-4 sm:p-5 border-l-2 border-gray-400">
+                <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
                   {product.description}
                 </p>
               </div>
@@ -332,7 +348,7 @@ export default function Home() {
           <HowToBuy />
 
           {/* Customer Reviews Section */}
-          <div className="-mx-4 sm:mx-0 mb-16 bg-white py-12 px-4 sm:px-8">
+          <div className="-mx-4 sm:mx-0 mb-8 bg-white py-8 px-4 sm:px-8">
             <div className="container mx-auto">
               <CustomerReviews 
               rating={4.9}
@@ -360,7 +376,7 @@ export default function Home() {
           </div>
 
           {/* Leave a Review Section */}
-          <div className="-mx-4 sm:mx-0 mb-16 bg-gray-50 py-12 px-4 sm:px-8">
+          <div className="-mx-4 sm:mx-0 mb-16 bg-white py-8 px-4 sm:px-8">
             <div className="container mx-auto">
               <LeaveReview onSubmit={handleNewReview} />
             </div>
@@ -395,7 +411,7 @@ export default function Home() {
       <Footer />
 
       {/* Sticky Buy Now Button */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl p-4 md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-300 p-4 md:hidden">
         <button 
           onClick={() => {
             // Scroll to plan selector
@@ -404,7 +420,7 @@ export default function Home() {
               planSelector.scrollIntoView({ behavior: 'smooth', block: 'center' })
             }
           }}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-bold text-lg transition-all shadow-lg"
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 font-bold text-lg transition-colors"
         >
           Buy Now
         </button>

@@ -119,7 +119,7 @@ export default function Products() {
               </div>
               
               {/* Product Image/Icon */}
-              <div className="relative bg-gray-50 overflow-hidden h-56">
+              <div className="relative bg-white overflow-hidden h-56 border-b border-gray-200">
                 {product.image.startsWith('/') || product.image.startsWith('http') ? (
                   <Image 
                     src={product.image} 

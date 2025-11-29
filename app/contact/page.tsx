@@ -33,9 +33,9 @@ export default function ContactPage() {
                 {/* Gmail */}
                 <a 
                   href="mailto:contact@only4premiums.com"
-                  className="flex items-start space-x-4 p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group"
+                  className="flex items-start space-x-4 p-6 bg-white border border-gray-300 transition-colors group"
                 >
-                  <div className="flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-sm shrink-0">
+                  <div className="flex items-center justify-center w-12 h-12 bg-white rounded-full border border-gray-300 shrink-0">
                     <svg className="h-7 w-7" viewBox="0 0 256 193" fill="none">
                       <path d="M58.182 192.05V93.14L27.507 65.077L0 49.504v125.091c0 9.658 7.825 17.455 17.455 17.455h40.727Z" fill="#4285F4"/>
                       <path d="M197.818 192.05h40.727c9.659 0 17.455-7.826 17.455-17.455V49.505l-31.156 17.837-27.026 25.798v99.91Z" fill="#34A853"/>
@@ -56,7 +56,7 @@ export default function ContactPage() {
                   href="https://t.me/only4premiums_support"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start space-x-4 p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group"
+                  className="flex items-start space-x-4 p-6 bg-white border border-gray-300 transition-colors group"
                 >
                   <div className="flex items-center justify-center w-12 h-12 bg-[#0088cc] rounded-full shrink-0">
                     <svg className="h-7 w-7" viewBox="0 0 240 240" fill="none">
@@ -91,7 +91,7 @@ export default function ContactPage() {
             </div>
 
             {/* Contact Form or Image */}
-            <div className="bg-linear-to-br from-purple-50 to-blue-50 rounded-3xl p-8 lg:p-12 flex flex-col justify-center items-center text-center">
+            <div className="bg-white border border-gray-300 p-8 lg:p-12 flex flex-col justify-center items-center text-center">
               <div className="mb-6">
                 <div className="w-20 h-20 bg-[#0088cc] rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="h-10 w-10" viewBox="0 0 240 240" fill="white">
@@ -109,7 +109,7 @@ export default function ContactPage() {
               <div className="space-y-4 w-full max-w-sm">
                 <a 
                   href="mailto:contact@only4premiums.com"
-                  className="block w-full bg-white hover:bg-gray-50 text-gray-900 font-semibold py-4 px-6 rounded-xl transition-colors shadow-sm"
+                  className="block w-full bg-white text-gray-900 font-semibold py-4 px-6 transition-colors border border-gray-300 hover:border-gray-900"
                 >
                   <Mail className="inline h-5 w-5 mr-2" />
                   Email Support
@@ -118,7 +118,7 @@ export default function ContactPage() {
                   href="https://t.me/only4premiums_support"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block w-full bg-[#0088cc] hover:bg-[#0077b5] text-white font-semibold py-4 px-6 rounded-xl transition-colors"
+                  className="block w-full bg-[#0088cc] hover:bg-[#0077b5] text-white font-semibold py-4 px-6 transition-colors"
                 >
                   <svg className="inline h-5 w-5 mr-2" viewBox="0 0 240 240" fill="white">
                     <path d="M94.9297 148.838L91.3906 195.273C96.5156 195.273 98.7656 193.023 101.516 190.273L123.141 169.398L167.766 202.023C176.391 206.773 182.641 204.398 185.016 193.898L215.891 64.3984L215.953 64.3359C218.703 51.2734 211.203 46.5234 202.828 49.8984L28.8281 118.148C16.2656 123.148 16.3281 130.523 26.9531 133.898L69.2031 147.648L173.516 84.6484C178.391 81.5234 182.891 83.3984 179.266 86.5234"/>

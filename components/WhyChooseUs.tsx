@@ -30,7 +30,7 @@ export default function WhyChooseUs() {
   ]
 
   return (
-    <div className="-mx-4 sm:mx-0 mb-16 bg-gray-50 py-12 lg:py-16 px-4 sm:px-8">
+    <div className="-mx-4 sm:mx-0 mb-16 bg-white py-12 lg:py-16 px-4 sm:px-8">
       <div className="container mx-auto">
         <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-12">
           Why Choose Only4Premiums TradingView Plans?
