@@ -3,32 +3,65 @@
 export default function HowToBuy() {
   const steps = [
     {
-      text: 'Click "Buy Now" – Select your plan and proceed.'
+      number: '01',
+      title: 'Choose Your Plan',
+      text: 'Select from Essential, Pro Plus, or Premium plans and pick your validity period.',
+      icon: '🎯',
+      color: 'from-purple-500 to-pink-500'
     },
     {
-      text: 'Make Payment – Choose your payment method.'
+      number: '02',
+      title: 'Select Payment Method',
+      text: 'Choose between UPI or Cryptocurrency - both are secure and instant.',
+      icon: '💳',
+      color: 'from-blue-500 to-cyan-500'
     },
     {
-      text: 'Get Service – Details will be sent to your WhatsApp.'
+      number: '03',
+      title: 'Get Instant Access',
+      text: 'Receive your credentials via WhatsApp within 10 minutes to 1 hour.',
+      icon: '⚡',
+      color: 'from-green-500 to-emerald-500'
     }
   ]
 
   return (
-    <div className="mb-16 bg-white rounded-3xl p-8 lg:p-12 border-2 border-gray-100">
-      <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-4">
-        How to Buy in <span className="relative">
-          3 Easy Steps
-          <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8" fill="none">
-            <path d="M1 5.5C50 1.5 150 1.5 199 5.5" stroke="#EF4444" strokeWidth="3" strokeLinecap="round"/>
-          </svg>
-        </span>
-      </h2>
+    <div className="-mx-4 sm:mx-0 mb-16 bg-white py-12 lg:py-16 px-4 sm:px-8 border-t border-b border-gray-200">
+      <div className="container mx-auto">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-3">
+          How to Buy in <span className="text-orange-600">3 Easy Steps</span>
+        </h2>
+        <p className="text-center text-gray-600 mb-8 sm:mb-12 text-base sm:text-lg">Simple, fast, and secure process</p>
 
-      <div className="max-w-2xl mx-auto mt-12 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 max-w-full">
         {steps.map((step, index) => (
-          <div key={index} className="flex items-start space-x-3">
-            <span className="text-gray-700 text-lg">•</span>
-            <p className="text-lg text-gray-700">{step.text}</p>
+          <div key={index} className="relative group">
+            {/* Connector Line for desktop */}
+            {index < steps.length - 1 && (
+              <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-0.5 bg-linear-to-r from-purple-300 to-transparent z-0" />
+            )}
+            
+            <div className="relative bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-purple-300 z-10">
+              {/* Step Number Badge */}
+              <div className="absolute -top-4 -right-4 w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center shadow-lg text-white font-bold text-lg">
+                {step.number}
+              </div>
+
+              {/* Icon */}
+              <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                {step.icon}
+              </div>
+
+              {/* Title */}
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                {step.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-gray-600 leading-relaxed">
+                {step.text}
+              </p>
+            </div>
           </div>
         ))}
       </div>
@@ -48,6 +81,7 @@ export default function HowToBuy() {
             <span className="font-medium">Chat on Telegram</span>
           </a>
         </div>
+      </div>
       </div>
     </div>
   )

@@ -14,7 +14,7 @@ interface ProductPlanSelectorProps {
 }
 
 export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps) {
-  const [selectedPlan, setSelectedPlan] = useState('')
+  const [selectedPlan, setSelectedPlan] = useState(plans[0]?.name || '')
   const [selectedValidity, setSelectedValidity] = useState('')
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState('')
@@ -40,32 +40,48 @@ export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps)
   }
 
   return (
-    <div className="mb-8">
+    <div className="mb-8 product-plan-selector">
       <button className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg font-bold mb-6 transition-all uppercase text-sm">
         Click Here : How to Buy and Use it ?
       </button>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Select Plan</h2>
-      <select 
-        value={selectedPlan}
-        onChange={(e) => setSelectedPlan(e.target.value)}
-        className="w-full border-2 border-gray-300 rounded-lg px-4 py-3 mb-4 text-gray-700 focus:border-purple-400 focus:outline-none"
-      >
-        <option value="">Choose an option</option>
+      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">Select Plan</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         {plans.map((plan, idx) => (
-          <option key={idx} value={plan.name}>
-            {plan.name} - ₹{plan.price}
-          </option>
+          <button
+            key={idx}
+            onClick={() => setSelectedPlan(plan.name)}
+            className={`relative p-4 rounded-xl border-2 transition-all text-left ${
+              selectedPlan === plan.name
+                ? 'border-orange-500 bg-orange-50 shadow-lg scale-105'
+                : 'border-gray-200 hover:border-orange-300 hover:shadow-md'
+            }`}
+          >
+            {selectedPlan === plan.name && (
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            )}
+            <div className="font-bold text-gray-900 text-sm sm:text-base mb-1">{plan.name}</div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-xl sm:text-2xl font-bold text-orange-600">₹{plan.price}</span>
+              {plan.originalPrice > plan.price && (
+                <span className="text-sm text-gray-400 line-through">₹{plan.originalPrice}</span>
+              )}
+            </div>
+          </button>
         ))}
-      </select>
+      </div>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Select Validity</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">Select Validity</h2>
       <select 
         value={selectedValidity}
         onChange={(e) => setSelectedValidity(e.target.value)}
-        className="w-full border-2 border-gray-300 rounded-lg px-4 py-3 mb-6 text-gray-700 focus:border-purple-400 focus:outline-none"
+        className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 mb-6 text-gray-700 font-medium focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all"
       >
-        <option value="">Choose an option</option>
+        <option value="">Choose validity period</option>
         <option value="1-month">1 Month</option>
         <option value="3-months">3 Months</option>
         <option value="6-months">6 Months</option>
@@ -75,7 +91,7 @@ export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps)
       {!showPayment ? (
         <button 
           onClick={handleBuyNow}
-          className="w-full bg-pink-300 hover:bg-pink-400 text-white py-4 rounded-lg font-bold text-lg transition-all uppercase"
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-bold text-lg transition-all"
         >
           Buy Now
         </button>
@@ -87,12 +103,12 @@ export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps)
             onClick={() => setSelectedPayment('UPI')}
             className={`w-full py-4 px-6 rounded-lg border-2 transition-all flex items-center justify-between ${
               selectedPayment === 'UPI' 
-                ? 'border-purple-600 bg-purple-50' 
-                : 'border-gray-300 hover:border-purple-400'
+                ? 'border-orange-500 bg-orange-50' 
+                : 'border-gray-300 hover:border-orange-300'
             }`}
           >
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-linear-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center">
                 <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
                 </svg>
@@ -103,7 +119,7 @@ export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps)
               </div>
             </div>
             {selectedPayment === 'UPI' && (
-              <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                 </svg>
@@ -120,7 +136,7 @@ export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps)
             }`}
           >
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-linear-to-br from-orange-400 to-orange-500 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center">
                 <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
                 </svg>

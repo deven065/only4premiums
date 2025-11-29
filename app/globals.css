@@ -345,3 +345,37 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(to bottom, #7c3aed, #db2777);
 }
+
+/* Masonry layout using CSS columns */
+.masonry {
+  column-gap: 12px;
+  /* default columns on smallest screens */
+  column-count: 2;
+}
+
+/* prevent items from breaking across columns */
+.masonry-item {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  display: inline-block; /* important so width respects column */
+  width: 100%;
+  transform-origin: center;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+/* hover pop */
+.masonry-item:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+/* responsive column counts */
+@media (min-width: 640px)  { /* sm */
+  .masonry { column-count: 3; column-gap: 14px; }
+}
+@media (min-width: 1024px) { /* lg */
+  .masonry { column-count: 4; column-gap: 16px; }
+}
+@media (min-width: 1280px) { /* xl */
+  .masonry { column-count: 5; column-gap: 18px; }
+}

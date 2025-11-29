@@ -112,21 +112,29 @@ export default function CustomerReviews({
 
         {/* Image Review Gallery */}
         {reviewImages.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Image Review</h3>
-            <div className="flex gap-3 overflow-x-auto pb-4">
-              {reviewImages.map((img, idx) => (
-                <div key={idx} className="relative h-24 w-32 shrink-0 rounded-lg overflow-hidden">
-                  <Image 
-                    src={img} 
-                    alt={`Review image ${idx + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
+          <section className="mb-12">
+            <h3 className="text-black text-3xl font-semibold text-center mb-6">Image Review</h3>
+
+            <div className="mx-auto max-w-full px-4">
+              <div className="grid grid-cols-5 gap-2">
+                {reviewImages.map((img, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-lg overflow-hidden border border-gray-300"
+                  >
+                    <div className="relative w-full aspect-square">
+                      <Image
+                        src={img}
+                        alt={`Review image ${idx + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          </section>
         )}
 
         {/* Individual Reviews */}
@@ -165,14 +173,6 @@ export default function CustomerReviews({
                       {review.rating === 5 ? 'Excellent' : review.rating === 4 ? 'Very Good' : review.rating === 3 ? 'Good' : 'Average'}
                     </span>
                   </div>
-
-                  {/* Verified Badge */}
-                  {review.verified && (
-                    <div className="inline-flex items-center space-x-1 text-sm text-green-600 mb-3">
-                      <span>✓</span>
-                      <span>Purchased from Only4Premiums</span>
-                    </div>
-                  )}
 
                   {/* Review Text */}
                   <p className="text-gray-700 mb-3">{review.text}</p>

@@ -2,15 +2,13 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductRating from '@/components/ProductRating'
 import ProductPlanSelector from '@/components/ProductPlanSelector'
 import ProductTrustBadges from '@/components/ProductTrustBadges'
-import ProductFeaturesList from '@/components/ProductFeaturesList'
-import ProductDeliveryInfo from '@/components/ProductDeliveryInfo'
-import ProductImageSlider from '@/components/ProductImageSlider'
-import WhyChooseUs from '@/components/WhyChooseUs'
 import HowToBuy from '@/components/HowToBuy'
 import ProductFAQ from '@/components/ProductFAQ'
 import CustomerReviews from '@/components/CustomerReviews'
@@ -42,7 +40,7 @@ export default function Home() {
       '100% Legit & Safe Subscription',
       'Real time data available'
     ],
-    description: 'Get TradingView Premium Account at the Lowest Price in India. Choose from Essential, Pro Plus, or Premium plans with instant verification and lifetime support.',
+    description: 'Unlock professional trading tools with TradingView Premium at unbeatable prices. Access advanced charting, real-time data, multiple indicators, and custom alerts. Choose your perfect plan - Essential, Pro Plus, or Premium - and start trading smarter today with instant delivery and 24/7 support.',
     includes: ['Setup 2 step authentication', 'Paid Premium Accounts', 'Password changeable', '100% Legit & Safe', 'Real time data'],
     screenshots: ['/TR-1.webp', '/TR-2.webp', '/TR-3.webp', '/TR-4.jpg', '/TR-5.webp'],
     plans: [
@@ -172,107 +170,201 @@ export default function Home() {
   ]
 
   const [reviews, setReviews] = useState<Review[]>(initialReviews)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+  const allImages = [product.image, ...product.screenshots]
 
   const handleNewReview = (newReview: Review) => {
     setReviews(prev => [newReview, ...prev])
   }
 
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % allImages.length)
+  }
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length)
+  }
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-linear-to-b from-white via-purple-50/30 to-white">
       <Header />
       
-      <main className="pt-32 pb-16">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 mb-12 sm:mb-16">
-            {/* Product Image */}
-            <div className="relative">
-              <div className="relative bg-gray-50 rounded-xl sm:rounded-2xl overflow-hidden h-64 sm:h-80 md:h-96 lg:h-[500px]">
-                <Image 
-                  src={product.image} 
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
-              
-              {/* Image Slider Below Main Product Image */}
-              <div className="mt-4 sm:mt-6 md:mt-8">
-                <ProductImageSlider images={product.screenshots} productName={product.name} />
+      {/* Trust Banner */}
+      <div className="bg-gray-800 text-white py-2 sm:py-3 mt-16 sm:mt-20">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm font-medium overflow-x-auto">
+            <span className="flex items-center gap-1.5 whitespace-nowrap">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+              </svg>
+              <span className="hidden sm:inline">100% Secure Payment</span>
+              <span className="sm:hidden">Secure</span>
+            </span>
+            <span className="flex items-center gap-1.5 whitespace-nowrap">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+              </svg>
+              <span className="hidden sm:inline">Instant Delivery</span>
+              <span className="sm:hidden">Instant</span>
+            </span>
+            <span className="flex items-center gap-1.5 whitespace-nowrap">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
+              </svg>
+              24/7 Support
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <main className="pt-4 sm:pt-8 pb-8 sm:pb-16">
+        <div className="container mx-auto px-4">
+          {/* Breadcrumb */}
+          <nav className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600 mb-4 sm:mb-8">
+            <Link href="/" className="hover:text-purple-600 transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-gray-900 font-medium">{product.name}</span>
+          </nav>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-16">
+            {/* Product Image Gallery */}
+            <div className="relative lg:sticky lg:top-28 h-fit w-full">
+              {/* Inner card container */}
+              <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-white shadow-xl">
+                {/* Make this the positioned container for the image + arrows */}
+                <div className="relative h-64 sm:h-80 md:h-[500px] lg:h-[600px] border border-gray-200 rounded-2xl sm:rounded-3xl overflow-visible">
+                  <Image 
+                    src={allImages[currentImageIndex]} 
+                    alt={`${product.name} - Image ${currentImageIndex + 1}`}
+                    fill
+                    className="object-contain transition-all duration-500"
+                    priority
+                  />
+
+                  {/* Image Counter */}
+                  <div className="absolute top-4 right-4 bg-black/80 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm z-40">
+                    {currentImageIndex + 1} / {allImages.length}
+                  </div>
+
+                  {/* inside the same relative image container (after the Image & counter) */}
+                  {allImages.length > 1 && (
+                    <div
+                      className="
+                        absolute inset-0 z-50 pointer-events-none
+                        flex items-center justify-between px-3
+                      "
+                    >
+                      <button
+                        onClick={prevImage}
+                        aria-label="Previous"
+                        className="
+                          pointer-events-auto
+                          w-10 h-10 rounded-full bg-white shadow-lg
+                          flex items-center justify-center text-gray-700
+                          hover:scale-105 transition-transform
+                        "
+                      >
+                        <ChevronLeft className="w-5 h-5" strokeWidth={2} />
+                      </button>
+
+                      <button
+                        onClick={nextImage}
+                        aria-label="Next"
+                        className="
+                          pointer-events-auto
+                          w-10 h-10 rounded-full bg-white shadow-lg
+                          flex items-center justify-center text-gray-700
+                          hover:scale-105 transition-transform
+                        "
+                      >
+                        <ChevronRight className="w-5 h-5" strokeWidth={2} />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Product Info */}
-            <div>
-              <span className="inline-block text-xs sm:text-sm text-purple-600 font-semibold bg-purple-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-3 sm:mb-4">
-                {product.category}
-              </span>
+            <div className="space-y-4 sm:space-y-6">
+              {/* Category Badge */}
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-700 font-semibold bg-gray-100 px-3 sm:px-4 py-1.5 sm:py-2 rounded border border-gray-200">
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
+                  </svg>
+                  {product.category}
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-600 bg-green-50 px-2.5 sm:px-3 py-1.5 rounded-full">
+                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  In Stock
+                </span>
+              </div>
               
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
+              {/* Product Title */}
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
                 {product.name}
               </h1>
 
+              {/* Rating */}
               <ProductRating rating={product.rating} reviews={product.reviews} />
 
-              <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed mb-6 sm:mb-8">
-                {product.description}
-              </p>
+              {/* Description */}
+              <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-orange-500">
+                <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+                  {product.description}
+                </p>
+              </div>
 
-              <ProductDeliveryInfo />
+              {/* Divider */}
+              <div className="border-t border-gray-200 my-4 sm:my-0"></div>
 
+              {/* Plan Selector */}
               <ProductPlanSelector plans={product.plans} />
 
+              {/* Trust Badges */}
               <ProductTrustBadges />
             </div>
           </div>
-
-          {/* Features & Includes */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-            <ProductFeaturesList 
-              title="Features" 
-              features={product.features}
-              bgColor="white"
-            />
-
-            <ProductFeaturesList 
-              title="What's Included" 
-              features={product.includes}
-              bgColor="purple"
-            />
-          </div>
-
-          {/* Why Choose Us Section */}
-          <WhyChooseUs />
 
           {/* How to Buy Section */}
           <HowToBuy />
 
           {/* Customer Reviews Section */}
-          <CustomerReviews 
-            rating={4.9}
-            totalReviews={76}
-            ratingBreakdown={{
-              5: 72,
-              4: 4,
-              3: 0,
-              2: 0,
-              1: 0
-            }}
-            reviewImages={[
-              '/TradingView.png',
-              '/TradingView.png',
-              '/TradingView.png',
-              '/TradingView.png',
-              '/TradingView.png',
-              '/TradingView.png',
-              '/TradingView.png',
-              '/TradingView.png'
-            ]}
-            reviews={reviews}
-          />
+          <div className="-mx-4 sm:mx-0 mb-16 bg-white py-12 px-4 sm:px-8">
+            <div className="container mx-auto">
+              <CustomerReviews 
+              rating={4.9}
+              totalReviews={76}
+              ratingBreakdown={{
+                5: 72,
+                4: 4,
+                3: 0,
+                2: 0,
+                1: 0
+              }}
+              reviewImages={[
+                '/TradingView.png',
+                '/TradingView.png',
+                '/TradingView.png',
+                '/TradingView.png',
+                '/TradingView.png',
+                '/TradingView.png',
+                '/TradingView.png',
+                '/TradingView.png'
+              ]}
+              reviews={reviews}
+            />
+            </div>
+          </div>
 
           {/* Leave a Review Section */}
-          <LeaveReview onSubmit={handleNewReview} />
+          <div className="-mx-4 sm:mx-0 mb-16 bg-gray-50 py-12 px-4 sm:px-8">
+            <div className="container mx-auto">
+              <LeaveReview onSubmit={handleNewReview} />
+            </div>
+          </div>
 
           {/* FAQ Section */}
           <ProductFAQ faqs={[
@@ -301,6 +393,22 @@ export default function Home() {
       </main>
 
       <Footer />
+
+      {/* Sticky Buy Now Button */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl p-4 md:hidden">
+        <button 
+          onClick={() => {
+            // Scroll to plan selector
+            const planSelector = document.querySelector('.product-plan-selector')
+            if (planSelector) {
+              planSelector.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }
+          }}
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-bold text-lg transition-all shadow-lg"
+        >
+          Buy Now
+        </button>
+      </div>
     </div>
   )
 }
