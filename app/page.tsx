@@ -13,6 +13,8 @@ import HowToBuy from '@/components/HowToBuy'
 import ProductFAQ from '@/components/ProductFAQ'
 import CustomerReviews from '@/components/CustomerReviews'
 import LeaveReview from '@/components/LeaveReview'
+import FloatingChatButton from '@/components/FloatingChatButton'
+import ComparisonTable from '@/components/ComparisonTable'
 
 interface Review {
   name: string
@@ -367,6 +369,9 @@ export default function Home() {
           {/* How to Buy Section */}
           <HowToBuy />
 
+          {/* Comparison Table Section */}
+          <ComparisonTable />
+
           {/* Customer Reviews Section */}
           <div className="-mx-4 sm:mx-0 mb-8 bg-white py-8 px-4 sm:px-8">
             <div className="container mx-auto">
@@ -420,6 +425,9 @@ export default function Home() {
       </main>
 
       <Footer />
+
+      {/* Floating Chat Button */}
+      <FloatingChatButton />
 
       {/* Sticky Buy Now Button */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-300 p-4 md:hidden">

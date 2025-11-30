@@ -19,6 +19,35 @@ export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps)
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState('')
 
+  // Calculate savings based on selected plan and validity
+  const calculateSavings = () => {
+    const plan = plans.find(p => p.name === selectedPlan)
+    if (!plan || !selectedValidity) return null
+
+    const validityMultiplier: { [key: string]: number } = {
+      '1-month': 1,
+      '3-months': 3,
+      '6-months': 6,
+      '1-year': 12
+    }
+
+    const multiplier = validityMultiplier[selectedValidity] || 1
+    const totalPrice = plan.price * multiplier
+    const totalOriginalPrice = plan.originalPrice * multiplier
+    const savings = totalOriginalPrice - totalPrice
+    const savingsPercentage = Math.round((savings / totalOriginalPrice) * 100)
+
+    return {
+      totalPrice,
+      totalOriginalPrice,
+      savings,
+      savingsPercentage,
+      validityLabel: selectedValidity.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())
+    }
+  }
+
+  const savingsData = calculateSavings()
+
   const handleBuyNow = () => {
     if (selectedPlan && selectedValidity) {
       setShowPayment(true)
@@ -79,7 +108,7 @@ export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps)
       <select 
         value={selectedValidity}
         onChange={(e) => setSelectedValidity(e.target.value)}
-        className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 mb-6 text-gray-700 font-medium focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all"
+        className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 mb-4 text-gray-700 font-medium focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all"
       >
         <option value="">Choose validity period</option>
         <option value="1-month">1 Month</option>
@@ -87,6 +116,27 @@ export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps)
         <option value="6-months">6 Months</option>
         <option value="1-year">1 Year</option>
       </select>
+
+      {/* Savings Display */}
+      {savingsData && (
+        <div className="border border-gray-300 rounded-lg p-4 mb-6 bg-white">
+          <div className="flex items-center justify-between pb-3 border-b border-gray-200">
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Total for {savingsData.validityLabel}</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl sm:text-2xl font-bold text-gray-900">₹{savingsData.totalPrice}</span>
+                <span className="text-sm text-gray-400 line-through">₹{savingsData.totalOriginalPrice}</span>
+              </div>
+            </div>
+            <div className="text-sm text-gray-600">
+              Save ₹{savingsData.savings}
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 mt-3">
+            {savingsData.savingsPercentage}% discount applied
+          </p>
+        </div>
+      )}
 
       {!showPayment ? (
         <button 
