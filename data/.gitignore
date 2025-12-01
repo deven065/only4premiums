@@ -1,0 +1,5 @@
+# Ignore all user data files
+users.json
+
+# But keep this directory in git
+!.gitignore

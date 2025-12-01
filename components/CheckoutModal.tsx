@@ -21,9 +21,11 @@ export default function CheckoutModal({
   validity, 
   price 
 }: CheckoutModalProps) {
-  const [step, setStep] = useState<'information' | 'finish'>('information')
+  const [step, setStep] = useState<'information' | 'payment' | 'finish'>('information')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState<'login' | 'signup' | null>(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'crypto' | null>(null)
   const [formData, setFormData] = useState({
     email: '',
     fullName: '',
@@ -115,7 +117,7 @@ export default function CheckoutModal({
       })
 
       if (response.ok) {
-        setStep('finish')
+        setStep('payment')
       } else {
         throw new Error('Failed to submit')
       }
@@ -128,9 +130,22 @@ export default function CheckoutModal({
   }
 
   const handleFinish = () => {
-    // Redirect to WhatsApp
-    const message = `Hi! I want to buy:\n\nProduct: ${productName}\n${plan ? `Plan: ${plan}\n` : ''}${validity ? `Validity: ${validity}\n` : ''}Price: ₹${price}\n\nName: ${formData.fullName}\nEmail: ${formData.email}\nWhatsApp: ${formData.whatsappNumber}`
-    // Use environment variable or fallback number
+    const paymentMethodText = paymentMethod === 'upi' ? 'UPI Payment' : 'Crypto Payment'
+    const message = `🛒 *New Order from Only4Premiums*\n\n` +
+      `👤 *Customer Details:*\n` +
+      `Name: ${formData.fullName}\n` +
+      `Email: ${formData.email}\n` +
+      `Country: ${formData.country}\n` +
+      `State: ${formData.state}\n` +
+      `WhatsApp: ${formData.whatsappNumber}\n\n` +
+      `📦 *Product Details:*\n` +
+      `Product: ${productName}\n` +
+      (plan ? `Plan: ${plan}\n` : '') +
+      (validity ? `Validity: ${validity}\n` : '') +
+      `💰 Price: ₹${price}\n` +
+      `💳 Payment Method: ${paymentMethodText}\n\n` +
+      `I have completed the payment and want to confirm my purchase!`
+
     const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919876543210'
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
     window.open(whatsappUrl, '_blank')
@@ -152,19 +167,154 @@ export default function CheckoutModal({
       }
     }
 
-    // Here you would integrate with your authentication system
-    // For now, we'll just populate the form with the user's data
-    setFormData({
-      ...formData,
-      email: authData.email,
-      fullName: authData.fullName || formData.fullName
-    })
-    
-    setShowAuthModal(null)
-    alert(`${type === 'login' ? 'Logged in' : 'Signed up'} successfully! Please complete your order details.`)
-  }
+    try {
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: type,
+          email: authData.email,
+          fullName: authData.fullName,
+          password: authData.password,
+        }),
+      })
 
+      const data = await response.json()
+
+      if (data.success) {
+        // Populate form with authenticated user's data
+        setFormData({
+          ...formData,
+          email: authData.email,
+          fullName: data.user?.fullName || authData.fullName || formData.fullName
+        })
+        
+        setIsLoggedIn(true)
+        setShowAuthModal(null)
+        alert(data.message)
+      } else {
+        alert(data.message || 'Authentication failed')
+      }
+    } catch (error) {
+      console.error('Auth error:', error)
+      alert('Network error. Please try again.')
+    }
+    alert(`${type === 'login' ? 'Logged in' : 'Signed up'} successfully! You can now complete your order.`)
+  }
   if (!isOpen) return null
+
+  // Show login modal if not logged in
+  if (!isLoggedIn) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeInUp">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-gray-900">
+                {showAuthModal === 'signup' ? 'Sign Up' : 'Log In'}
+              </h3>
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+              <p className="text-sm text-orange-800">
+                <strong>Please log in or sign up</strong> to continue with your purchase.
+              </p>
+            </div>
+
+            <form onSubmit={(e) => handleAuthSubmit(e, showAuthModal === 'signup' ? 'signup' : 'login')} className="space-y-4">
+              {showAuthModal === 'signup' && (
+                <div>
+                  <label htmlFor="auth-fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="auth-fullName"
+                    value={authData.fullName}
+                    onChange={(e) => setAuthData({ ...authData, fullName: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all placeholder:text-gray-400 text-gray-900"
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="auth-email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  id="auth-email"
+                  value={authData.email}
+                  onChange={(e) => setAuthData({ ...authData, email: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all placeholder:text-gray-400 text-gray-900"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="auth-password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="password"
+                  id="auth-password"
+                  value={authData.password}
+                  onChange={(e) => setAuthData({ ...authData, password: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all placeholder:text-gray-400 text-gray-900"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-linear-to-r from-orange-500 to-pink-500 text-white py-3 rounded-lg font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+              >
+                {showAuthModal === 'signup' ? 'Sign Up' : 'Log In'}
+              </button>
+
+              <p className="text-center text-sm text-gray-600">
+                {showAuthModal === 'signup' ? (
+                  <>
+                    Already have an account?{' '}
+                    <button
+                      type="button"
+                      onClick={() => setShowAuthModal('login')}
+                      className="text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      Log in
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    Don&apos;t have an account?{' '}
+                    <button
+                      type="button"
+                      onClick={() => setShowAuthModal('signup')}
+                      className="text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      Sign up
+                    </button>
+                  </>
+                )}
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeInUp overflow-hidden">
@@ -184,21 +334,30 @@ export default function CheckoutModal({
               <span className="font-bold text-xl text-gray-900">Only4Premiums</span>
             </div>
             
-            <div className="hidden sm:flex items-center space-x-6">
+            <div className="hidden sm:flex items-center space-x-4">
               <div className={`flex items-center space-x-2 ${step === 'information' ? 'text-orange-600' : 'text-gray-400'}`}>
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
                   step === 'information' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
                 }`}>
-                  {step === 'finish' ? '✓' : '1'}
+                  {step !== 'information' ? '✓' : '1'}
                 </div>
                 <span className="text-sm font-medium">Information</span>
               </div>
               
+              <div className={`flex items-center space-x-2 ${step === 'payment' ? 'text-orange-600' : 'text-gray-400'}`}>
+                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
+                  step === 'payment' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
+                }`}>
+                  {step === 'finish' ? '✓' : '2'}
+                </div>
+                <span className="text-sm font-medium">Payment</span>
+              </div>
+
               <div className={`flex items-center space-x-2 ${step === 'finish' ? 'text-orange-600' : 'text-gray-400'}`}>
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
                   step === 'finish' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
                 }`}>
-                  2
+                  3
                 </div>
                 <span className="text-sm font-medium">Finish</span>
               </div>
@@ -243,7 +402,7 @@ export default function CheckoutModal({
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-1">Customer information</h2>
                   <p className="text-sm text-gray-600 mb-4">
-                    Already have an account? <button type="button" onClick={() => setShowAuthModal('login')} className="text-blue-600 hover:text-blue-700 font-medium">Log in</button>
+                    Logged in as <span className="font-semibold text-gray-900">{formData.email}</span>
                   </p>
                   
                   <div>
@@ -418,6 +577,215 @@ export default function CheckoutModal({
               </div>
             </div>
           </form>
+        ) : step === 'payment' ? (
+          <div className="p-6 lg:p-8">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center">Choose Payment Method</h2>
+              <p className="text-gray-600 mb-8 text-center">Select your preferred payment method to complete your purchase</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {/* UPI Payment Option */}
+                <div 
+                  onClick={() => setPaymentMethod('upi')}
+                  className={`cursor-pointer border-2 rounded-2xl p-6 transition-all hover:shadow-xl ${
+                    paymentMethod === 'upi' 
+                      ? 'border-orange-500 bg-orange-50 shadow-lg' 
+                      : 'border-gray-200 hover:border-orange-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-bold text-gray-900">UPI Payment</h3>
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                      paymentMethod === 'upi' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
+                    }`}>
+                      {paymentMethod === 'upi' && (
+                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Pay directly via UPI - Google Pay, PhonePe, Paytm, or any UPI app
+                  </p>
+                  <div className="flex items-center space-x-2 text-green-600 text-sm font-medium">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Instant Payment • 0% Fee • Best for India</span>
+                  </div>
+                </div>
+
+                {/* Crypto Payment Option */}
+                <div 
+                  onClick={() => setPaymentMethod('crypto')}
+                  className={`cursor-pointer border-2 rounded-2xl p-6 transition-all hover:shadow-xl ${
+                    paymentMethod === 'crypto' 
+                      ? 'border-orange-500 bg-orange-50 shadow-lg' 
+                      : 'border-gray-200 hover:border-orange-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-bold text-gray-900">USDT (BEP-20)</h3>
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                      paymentMethod === 'crypto' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
+                    }`}>
+                      {paymentMethod === 'crypto' && (
+                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Pay with USDT on Binance Smart Chain (BEP-20 network)
+                  </p>
+                  <div className="flex items-center space-x-2 text-blue-600 text-sm font-medium">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span>Stable • Low Fees • Best for International</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Details */}
+              {paymentMethod && (
+                <div className="bg-gradient-to-r from-orange-50 to-pink-50 border-2 border-orange-200 rounded-2xl p-8 mb-6 animate-fadeInUp">
+                  {paymentMethod === 'upi' ? (
+                    <div className="text-center">
+                      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 px-4">Scan QR Code or Use UPI ID</h3>
+                      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg mb-6 max-w-sm mx-auto">
+                        <div className="w-full max-w-[280px] aspect-square bg-white rounded-xl flex items-center justify-center mb-4 mx-auto">
+                          <Image
+                            src="/Sandeep-UPI-QR.jpeg"
+                            alt="UPI QR Code"
+                            width={280}
+                            height={280}
+                            className="rounded-xl object-contain w-full h-full"
+                          />
+                        </div>
+                        <p className="text-sm font-bold text-gray-900 mb-3">Amount: ₹{price}</p>
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                          <p className="text-xs text-gray-600 mb-1">Or pay directly to UPI ID:</p>
+                          <p className="font-mono text-sm font-bold text-blue-900 break-all" id="upi-id">firdos829@ptyes</p>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText('firdos829@ptyes')
+                              alert('UPI ID copied to clipboard!')
+                            }}
+                            className="mt-2 text-blue-600 hover:text-blue-700 font-medium text-xs flex items-center justify-center space-x-1 mx-auto"
+                          >
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            <span>Copy UPI ID</span>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="space-y-3 text-left max-w-md mx-auto">
+                        <div className="flex items-start space-x-3">
+                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">1</div>
+                          <p className="text-sm text-gray-700">Open your UPI app (Google Pay, PhonePe, Paytm, etc.)</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">2</div>
+                          <p className="text-sm text-gray-700">Scan the QR code OR enter UPI ID: <strong>firdos829@ptyes</strong></p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">3</div>
+                          <p className="text-sm text-gray-700">Pay ₹{price} and complete the transaction</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">4</div>
+                          <p className="text-sm text-gray-700">Click &quot;Payment Complete&quot; button below</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 px-4">Pay with USDT (BEP-20)</h3>
+                      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg mb-6 max-w-sm mx-auto">
+                        <div className="w-full max-w-[280px] aspect-square bg-white rounded-xl flex items-center justify-center mx-auto mb-4">
+                          <Image
+                            src="/Sandeep-Binance-QR.jpeg"
+                            alt="USDT BEP-20 QR Code"
+                            width={280}
+                            height={280}
+                            className="rounded-xl object-contain w-full h-full"
+                          />
+                        </div>
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+                          <p className="text-sm font-bold text-blue-900">Network: BEP-20 (Binance Smart Chain)</p>
+                          <p className="text-xs text-blue-700 mt-1">⚠️ Only send USDT on BEP-20 network</p>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-3 font-medium">Or manually copy address:</p>
+                        <div className="bg-gray-50 p-3 sm:p-4 rounded-lg mb-4 border-2 border-gray-200">
+                          <p className="font-mono text-xs text-gray-900 break-all" id="crypto-address">
+                            {process.env.NEXT_PUBLIC_CRYPTO_ADDRESS || '0xA1426458889A2d7aCf9B7656EeE4c13C37AaED36'}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const address = document.getElementById('crypto-address')?.innerText || ''
+                            navigator.clipboard.writeText(address)
+                            alert('Address copied to clipboard!')
+                          }}
+                          className="text-orange-600 hover:text-orange-700 font-medium text-sm flex items-center justify-center space-x-2 mx-auto"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                          <span>Copy Address</span>
+                        </button>
+                      </div>
+                      <div className="space-y-3 text-left max-w-md mx-auto">
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                          <p className="text-sm text-yellow-800">
+                            <strong>Amount:</strong> ₹{price} (Convert to USDT equivalent)
+                          </p>
+                          <p className="text-xs text-yellow-700 mt-1">Example: ₹999 ≈ 11.75 USDT</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">1</div>
+                          <p className="text-sm text-gray-700">Open Binance app and scan the QR code OR copy the address</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">2</div>
+                          <p className="text-sm text-gray-700"><strong>Select USDT and BEP-20 network</strong> (Binance Smart Chain)</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">3</div>
+                          <p className="text-sm text-gray-700">Send the USDT amount and complete the transaction</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">4</div>
+                          <p className="text-sm text-gray-700">Click &quot;Payment Complete&quot; button below</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={() => setStep('information')}
+                  className="flex-1 border-2 border-gray-300 text-gray-700 py-4 rounded-lg font-bold hover:bg-gray-50 transition-all"
+                >
+                  ← Back
+                </button>
+                <button
+                  onClick={() => paymentMethod && setStep('finish')}
+                  disabled={!paymentMethod}
+                  className="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white py-4 rounded-lg font-bold hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                >
+                  Payment Complete →
+                </button>
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="p-6 lg:p-12 text-center">
             <div className="max-w-md mx-auto">
@@ -427,17 +795,17 @@ export default function CheckoutModal({
                 </svg>
               </div>
               
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Information Received!</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Payment Complete!</h2>
               <p className="text-gray-600 mb-8">
-                Thank you for your interest. We&apos;ve received your information and will process your order shortly.
+                Thank you for your payment! Please confirm your purchase on WhatsApp to get instant access.
               </p>
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
-                <h3 className="font-bold text-gray-900 mb-2">Next Steps:</h3>
+                <h3 className="font-bold text-gray-900 mb-2">Final Step:</h3>
                 <ol className="text-sm text-gray-700 space-y-2 list-decimal list-inside">
-                  <li>Click the button below to contact us on WhatsApp</li>
-                  <li>Complete your payment via your preferred method</li>
-                  <li>Receive instant access to your product</li>
+                  <li>Click the WhatsApp button below</li>
+                  <li>Send us the payment confirmation message</li>
+                  <li>Receive instant access to <strong>{productName}</strong></li>
                 </ol>
               </div>
 
