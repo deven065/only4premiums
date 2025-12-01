@@ -493,46 +493,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Spotify Premium */}
-              <div 
-                onClick={() => router.push('/products/spotify-premium')}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
-              >
-                <div className="relative h-48 bg-black overflow-hidden">
-                  <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10">
-                    88% OFF
-                  </div>
-                  <Image 
-                    src="/spotify.jpg" 
-                    alt="Spotify Premium"
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-purple-600 font-semibold bg-purple-50 px-3 py-1 rounded-full">
-                      Music
-                    </span>
-                    <div className="flex items-center space-x-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-bold text-gray-900">4.88</span>
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                    Spotify Premium
-                  </h3>
-                  <div className="flex items-baseline space-x-2 mb-4">
-                    <span className="text-2xl font-bold text-gray-900">₹149</span>
-                    <span className="text-sm text-gray-400 line-through">₹1200</span>
-                  </div>
-                  <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2">
-                    <ShoppingCart className="h-5 w-5" />
-                    <span>View Details</span>
-                  </button>
-                </div>
-              </div>
-
               {/* Trading Hub Course */}
               <div 
                 onClick={() => router.push('/products/trading-hub-course')}
