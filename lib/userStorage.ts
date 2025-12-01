@@ -1,47 +1,48 @@
-// Server-side user storage using internal API
-// This allows users to login from any device across the deployment
+// Client-side user storage using localStorage
+// This allows users to stay logged in on the same device/browser
 
-interface User {
+export interface User {
   email: string;
   fullName: string;
   passwordHash: string;
   createdAt: string;
 }
 
-// Get all users from storage API
+// Storage key
+const USERS_STORAGE_KEY = 'only4premiums_users_db';
+
+// Get all users from localStorage
 export async function getAllUsers(): Promise<Map<string, User>> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/users`, {
-      method: 'GET',
-      cache: 'no-store',
-    });
+    // Only runs on client-side
+    if (typeof window === 'undefined') {
+      return new Map();
+    }
     
-    if (response.ok) {
-      const data = await response.json();
-      return new Map(Object.entries(data.users || {}));
+    const stored = localStorage.getItem(USERS_STORAGE_KEY);
+    if (stored) {
+      const users = JSON.parse(stored);
+      return new Map(Object.entries(users));
     }
     
     return new Map();
   } catch (error) {
-    console.error('Error loading users:', error);
+    console.error('Error loading users from localStorage:', error);
     return new Map();
   }
 }
 
-// Save all users to storage API
+// Save all users to localStorage
 export async function saveAllUsers(users: Map<string, User>): Promise<void> {
   try {
-    const usersObject = Object.fromEntries(users);
+    // Only runs on client-side
+    if (typeof window === 'undefined') {
+      return;
+    }
     
-    await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ users: usersObject }),
-      cache: 'no-store',
-    });
+    const usersObject = Object.fromEntries(users);
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(usersObject));
   } catch (error) {
-    console.error('Error saving users:', error);
+    console.error('Error saving users to localStorage:', error);
   }
 }

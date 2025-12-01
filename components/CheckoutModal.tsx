@@ -58,6 +58,19 @@ export default function CheckoutModal({
     }
   }, [])
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
   const countries = [
     'India', 'United States', 'United Kingdom', 'Canada', 'Australia',
     'Germany', 'France', 'Italy', 'Spain', 'Netherlands',
@@ -187,45 +200,57 @@ export default function CheckoutModal({
     }
 
     try {
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: type,
-          email: authData.email,
-          fullName: authData.fullName,
-          password: authData.password,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        // Save user data to localStorage for persistent login
-        const userData = {
-          email: authData.email,
-          fullName: data.user?.fullName || authData.fullName || formData.fullName
+      // Import auth functions dynamically
+      const { signUp, login } = await import('@/lib/auth')
+      
+      if (type === 'signup') {
+        const result = await signUp(authData.email, authData.fullName, authData.password)
+        
+        if (result.success) {
+          const userData = {
+            email: authData.email,
+            fullName: authData.fullName
+          }
+          localStorage.setItem('only4premiums_user', JSON.stringify(userData))
+          
+          setFormData({
+            ...formData,
+            email: userData.email,
+            fullName: userData.fullName
+          })
+          
+          setIsLoggedIn(true)
+          setShowAuthModal(null)
+          alert('Account created successfully!')
+        } else {
+          alert(result.message || 'Signup failed')
         }
-        localStorage.setItem('only4premiums_user', JSON.stringify(userData))
-        
-        // Populate form with authenticated user's data
-        setFormData({
-          ...formData,
-          email: userData.email,
-          fullName: userData.fullName
-        })
-        
-        setIsLoggedIn(true)
-        setShowAuthModal(null)
-        // Show success message and continue to checkout
       } else {
-        alert(data.message || 'Authentication failed')
+        const result = await login(authData.email, authData.password)
+        
+        if (result.success && result.user) {
+          const userData = {
+            email: result.user.email,
+            fullName: result.user.fullName
+          }
+          localStorage.setItem('only4premiums_user', JSON.stringify(userData))
+          
+          setFormData({
+            ...formData,
+            email: userData.email,
+            fullName: userData.fullName
+          })
+          
+          setIsLoggedIn(true)
+          setShowAuthModal(null)
+          alert('Logged in successfully!')
+        } else {
+          alert(result.message || 'Login failed')
+        }
       }
     } catch (error) {
       console.error('Auth error:', error)
-      alert('Network error. Please try again.')
+      alert('Authentication error. Please try again.')
     }
   }
   if (!isOpen) return null
@@ -233,7 +258,7 @@ export default function CheckoutModal({
   // Show login modal if not logged in
   if (!isLoggedIn) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeInUp">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeInUp">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
@@ -342,7 +367,7 @@ export default function CheckoutModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeInUp overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeInUp overflow-hidden">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[90vh] overflow-y-auto scrollbar-smooth overscroll-contain">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b sm:border-b-0 border-gray-200 px-6 py-4 flex items-center justify-between">
