@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, Lock } from 'lucide-react'
 import Image from 'next/image'
 
@@ -23,7 +23,7 @@ export default function CheckoutModal({
 }: CheckoutModalProps) {
   const [step, setStep] = useState<'information' | 'payment' | 'finish'>('information')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showAuthModal, setShowAuthModal] = useState<'login' | 'signup' | null>(null)
+  const [showAuthModal, setShowAuthModal] = useState<'login' | 'signup' | null>('login')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'crypto' | null>(null)
   const [formData, setFormData] = useState({
@@ -38,6 +38,25 @@ export default function CheckoutModal({
     password: '',
     fullName: ''
   })
+
+  // Check for saved user session on component mount
+  useEffect(() => {
+    const savedUser = localStorage.getItem('only4premiums_user')
+    if (savedUser) {
+      try {
+        const userData = JSON.parse(savedUser)
+        setFormData(prev => ({
+          ...prev,
+          email: userData.email,
+          fullName: userData.fullName
+        }))
+        setIsLoggedIn(true)
+      } catch (error) {
+        console.error('Error loading saved user:', error)
+        localStorage.removeItem('only4premiums_user')
+      }
+    }
+  }, [])
 
   const countries = [
     'India', 'United States', 'United Kingdom', 'Canada', 'Australia',
@@ -184,16 +203,23 @@ export default function CheckoutModal({
       const data = await response.json()
 
       if (data.success) {
+        // Save user data to localStorage for persistent login
+        const userData = {
+          email: authData.email,
+          fullName: data.user?.fullName || authData.fullName || formData.fullName
+        }
+        localStorage.setItem('only4premiums_user', JSON.stringify(userData))
+        
         // Populate form with authenticated user's data
         setFormData({
           ...formData,
-          email: authData.email,
-          fullName: data.user?.fullName || authData.fullName || formData.fullName
+          email: userData.email,
+          fullName: userData.fullName
         })
         
         setIsLoggedIn(true)
         setShowAuthModal(null)
-        alert(data.message)
+        // Show success message and continue to checkout
       } else {
         alert(data.message || 'Authentication failed')
       }
@@ -201,7 +227,6 @@ export default function CheckoutModal({
       console.error('Auth error:', error)
       alert('Network error. Please try again.')
     }
-    alert(`${type === 'login' ? 'Logged in' : 'Signed up'} successfully! You can now complete your order.`)
   }
   if (!isOpen) return null
 
@@ -400,7 +425,26 @@ export default function CheckoutModal({
 
                 {/* Customer Information */}
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-1">Customer information</h2>
+                  <div className="flex items-center justify-between mb-1">
+                    <h2 className="text-2xl font-bold text-gray-900">Customer information</h2>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        localStorage.removeItem('only4premiums_user')
+                        setIsLoggedIn(false)
+                        setFormData({
+                          email: '',
+                          fullName: '',
+                          country: '',
+                          state: '',
+                          whatsappNumber: ''
+                        })
+                      }}
+                      className="text-xs text-blue-600 hover:text-blue-700 font-medium underline"
+                    >
+                      Logout
+                    </button>
+                  </div>
                   <p className="text-sm text-gray-600 mb-4">
                     Logged in as <span className="font-semibold text-gray-900">{formData.email}</span>
                   </p>
@@ -578,22 +622,22 @@ export default function CheckoutModal({
             </div>
           </form>
         ) : step === 'payment' ? (
-          <div className="p-6 lg:p-8">
+          <div className="p-4 sm:p-6 lg:p-8">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center">Choose Payment Method</h2>
-              <p className="text-gray-600 mb-8 text-center">Select your preferred payment method to complete your purchase</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 text-center">Choose Payment Method</h2>
+              <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 text-center">Select your preferred payment method to complete your purchase</p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 mb-3 sm:mb-6">
                 {/* UPI Payment Option */}
                 <div 
                   onClick={() => setPaymentMethod('upi')}
-                  className={`cursor-pointer border-2 rounded-2xl p-6 transition-all hover:shadow-xl ${
+                  className={`cursor-pointer border-2 rounded-2xl p-4 sm:p-6 transition-all hover:shadow-xl ${
                     paymentMethod === 'upi' 
                       ? 'border-orange-500 bg-orange-50 shadow-lg' 
                       : 'border-gray-200 hover:border-orange-300'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
                     <h3 className="text-xl font-bold text-gray-900">UPI Payment</h3>
                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                       paymentMethod === 'upi' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
@@ -619,13 +663,13 @@ export default function CheckoutModal({
                 {/* Crypto Payment Option */}
                 <div 
                   onClick={() => setPaymentMethod('crypto')}
-                  className={`cursor-pointer border-2 rounded-2xl p-6 transition-all hover:shadow-xl ${
+                  className={`cursor-pointer border-2 rounded-2xl p-4 sm:p-6 transition-all hover:shadow-xl ${
                     paymentMethod === 'crypto' 
                       ? 'border-orange-500 bg-orange-50 shadow-lg' 
                       : 'border-gray-200 hover:border-orange-300'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
                     <h3 className="text-xl font-bold text-gray-900">USDT (BEP-20)</h3>
                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                       paymentMethod === 'crypto' ? 'border-orange-500 bg-orange-500' : 'border-gray-300'
@@ -651,12 +695,12 @@ export default function CheckoutModal({
 
               {/* Payment Details */}
               {paymentMethod && (
-                <div className="bg-gradient-to-r from-orange-50 to-pink-50 border-2 border-orange-200 rounded-2xl p-8 mb-6 animate-fadeInUp">
+                <div className="bg-gradient-to-r from-orange-50 to-pink-50 border-2 border-orange-200 rounded-2xl p-4 sm:p-8 mb-4 sm:mb-6 animate-fadeInUp">
                   {paymentMethod === 'upi' ? (
                     <div className="text-center">
-                      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 px-4">Scan QR Code or Use UPI ID</h3>
-                      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg mb-6 max-w-sm mx-auto">
-                        <div className="w-full max-w-[280px] aspect-square bg-white rounded-xl flex items-center justify-center mb-4 mx-auto">
+                      <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-4">Scan QR Code or Use UPI ID</h3>
+                      <div className="bg-white p-3 sm:p-6 rounded-2xl shadow-lg mb-4 sm:mb-6 max-w-sm mx-auto">
+                        <div className="w-full max-w-[220px] sm:max-w-[280px] aspect-square bg-white rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
                           <Image
                             src="/Sandeep-UPI-QR.jpeg"
                             alt="UPI QR Code"
@@ -683,30 +727,30 @@ export default function CheckoutModal({
                           </button>
                         </div>
                       </div>
-                      <div className="space-y-3 text-left max-w-md mx-auto">
-                        <div className="flex items-start space-x-3">
-                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">1</div>
-                          <p className="text-sm text-gray-700">Open your UPI app (Google Pay, PhonePe, Paytm, etc.)</p>
+                      <div className="space-y-2 sm:space-y-3 text-left max-w-md mx-auto">
+                        <div className="flex items-start space-x-2 sm:space-x-3">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">1</div>
+                          <p className="text-xs sm:text-sm text-gray-700">Open your UPI app (Google Pay, PhonePe, Paytm, etc.)</p>
                         </div>
-                        <div className="flex items-start space-x-3">
-                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">2</div>
-                          <p className="text-sm text-gray-700">Scan the QR code OR enter UPI ID: <strong>firdos829@ptyes</strong></p>
+                        <div className="flex items-start space-x-2 sm:space-x-3">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">2</div>
+                          <p className="text-xs sm:text-sm text-gray-700">Scan the QR code OR enter UPI ID: <strong>firdos829@ptyes</strong></p>
                         </div>
-                        <div className="flex items-start space-x-3">
-                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">3</div>
-                          <p className="text-sm text-gray-700">Pay ₹{price} and complete the transaction</p>
+                        <div className="flex items-start space-x-2 sm:space-x-3">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">3</div>
+                          <p className="text-xs sm:text-sm text-gray-700">Pay ₹{price} and complete the transaction</p>
                         </div>
-                        <div className="flex items-start space-x-3">
-                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">4</div>
-                          <p className="text-sm text-gray-700">Click &quot;Payment Complete&quot; button below</p>
+                        <div className="flex items-start space-x-2 sm:space-x-3">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">4</div>
+                          <p className="text-xs sm:text-sm text-gray-700">Click &quot;Payment Complete&quot; button below</p>
                         </div>
                       </div>
                     </div>
                   ) : (
                     <div className="text-center">
-                      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 px-4">Pay with USDT (BEP-20)</h3>
-                      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg mb-6 max-w-sm mx-auto">
-                        <div className="w-full max-w-[280px] aspect-square bg-white rounded-xl flex items-center justify-center mx-auto mb-4">
+                      <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-4">Pay with USDT (BEP-20)</h3>
+                      <div className="bg-white p-3 sm:p-6 rounded-2xl shadow-lg mb-4 sm:mb-6 max-w-sm mx-auto">
+                        <div className="w-full max-w-[220px] sm:max-w-[280px] aspect-square bg-white rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
                           <Image
                             src="/Sandeep-Binance-QR.jpeg"
                             alt="USDT BEP-20 QR Code"
@@ -739,28 +783,28 @@ export default function CheckoutModal({
                           <span>Copy Address</span>
                         </button>
                       </div>
-                      <div className="space-y-3 text-left max-w-md mx-auto">
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                          <p className="text-sm text-yellow-800">
+                      <div className="space-y-2 sm:space-y-3 text-left max-w-md mx-auto">
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2 sm:p-3 mb-2 sm:mb-4">
+                          <p className="text-xs sm:text-sm text-yellow-800">
                             <strong>Amount:</strong> ₹{price} (Convert to USDT equivalent)
                           </p>
                           <p className="text-xs text-yellow-700 mt-1">Example: ₹999 ≈ 11.75 USDT</p>
                         </div>
-                        <div className="flex items-start space-x-3">
-                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">1</div>
-                          <p className="text-sm text-gray-700">Open Binance app and scan the QR code OR copy the address</p>
+                        <div className="flex items-start space-x-2 sm:space-x-3">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">1</div>
+                          <p className="text-xs sm:text-sm text-gray-700">Open Binance app and scan the QR code OR copy the address</p>
                         </div>
-                        <div className="flex items-start space-x-3">
-                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">2</div>
-                          <p className="text-sm text-gray-700"><strong>Select USDT and BEP-20 network</strong> (Binance Smart Chain)</p>
+                        <div className="flex items-start space-x-2 sm:space-x-3">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">2</div>
+                          <p className="text-xs sm:text-sm text-gray-700"><strong>Select USDT and BEP-20 network</strong> (Binance Smart Chain)</p>
                         </div>
-                        <div className="flex items-start space-x-3">
-                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">3</div>
-                          <p className="text-sm text-gray-700">Send the USDT amount and complete the transaction</p>
+                        <div className="flex items-start space-x-2 sm:space-x-3">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">3</div>
+                          <p className="text-xs sm:text-sm text-gray-700">Send the USDT amount and complete the transaction</p>
                         </div>
-                        <div className="flex items-start space-x-3">
-                          <div className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-sm">4</div>
-                          <p className="text-sm text-gray-700">Click &quot;Payment Complete&quot; button below</p>
+                        <div className="flex items-start space-x-2 sm:space-x-3">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">4</div>
+                          <p className="text-xs sm:text-sm text-gray-700">Click &quot;Payment Complete&quot; button below</p>
                         </div>
                       </div>
                     </div>
@@ -769,17 +813,17 @@ export default function CheckoutModal({
               )}
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 sticky bottom-0 bg-white pt-3 sm:pt-4 pb-safe sm:pb-0 sm:static shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] sm:shadow-none -mx-4 px-4 sm:mx-0 sm:px-0">
                 <button
                   onClick={() => setStep('information')}
-                  className="flex-1 border-2 border-gray-300 text-gray-700 py-4 rounded-lg font-bold hover:bg-gray-50 transition-all"
+                  className="flex-1 border-2 border-gray-300 text-gray-700 py-3 sm:py-4 rounded-lg font-bold hover:bg-gray-50 transition-all text-sm sm:text-base"
                 >
                   ← Back
                 </button>
                 <button
                   onClick={() => paymentMethod && setStep('finish')}
                   disabled={!paymentMethod}
-                  className="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white py-4 rounded-lg font-bold hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white py-3 sm:py-4 rounded-lg font-bold hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm sm:text-base"
                 >
                   Payment Complete →
                 </button>

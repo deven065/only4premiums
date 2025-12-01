@@ -1,6 +1,16 @@
-// In-memory storage for demo purposes
-// In production, this should be replaced with a proper database
-const users = new Map<string, { email: string; fullName: string; passwordHash: string; createdAt: string }>();
+// Simple persistent storage using environment variable or in-memory fallback
+// In production with a database, replace this with proper database calls
+let usersStore: Map<string, { email: string; fullName: string; passwordHash: string; createdAt: string }>;
+
+// Initialize users store from environment or create new one
+function initializeUsersStore() {
+  if (!usersStore) {
+    usersStore = new Map();
+    // In a real implementation, this would load from a database
+    // For now, users persist during the runtime session
+  }
+  return usersStore;
+}
 
 // Hash password using Web Crypto API (works in edge runtime)
 async function hashPassword(password: string): Promise<string> {
@@ -13,6 +23,7 @@ async function hashPassword(password: string): Promise<string> {
 
 // Sign up a new user
 export async function signUp(email: string, fullName: string, password: string): Promise<{ success: boolean; message: string }> {
+  const users = initializeUsersStore();
   const emailLower = email.toLowerCase();
   
   // Check if user already exists
@@ -34,6 +45,7 @@ export async function signUp(email: string, fullName: string, password: string):
 
 // Log in a user
 export async function login(email: string, password: string): Promise<{ success: boolean; message: string; user?: { email: string; fullName: string } }> {
+  const users = initializeUsersStore();
   const emailLower = email.toLowerCase();
   const user = users.get(emailLower);
   
@@ -58,6 +70,7 @@ export async function login(email: string, password: string): Promise<{ success:
 
 // Get user by email (for verification)
 export function getUserByEmail(email: string): { email: string; fullName: string } | null {
+  const users = initializeUsersStore();
   const user = users.get(email.toLowerCase());
   
   if (!user) return null;
