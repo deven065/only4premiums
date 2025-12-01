@@ -30,7 +30,7 @@ export default function Features() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <div className="inline-block mb-4 opacity-0 animate-fadeInUp">
-            <span className="text-sm font-semibold text-purple-600 bg-purple-100 px-4 py-2 rounded-full">WHY CHOOSE US</span>
+            <span className="text-sm font-semibold text-purple-600 bg-purple-100 px-4 py-2 rounded-full">WHY CHOOSE ONLY4PREMIUMS</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900 opacity-0 animate-fadeInUp animation-delay-200">
             The Premium Difference

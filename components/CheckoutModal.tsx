@@ -279,7 +279,7 @@ export default function CheckoutModal({
 
               <button
                 type="submit"
-                className="w-full bg-linear-to-r from-orange-500 to-pink-500 text-white py-3 rounded-lg font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+                className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white py-3 rounded-lg font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all"
               >
                 {showAuthModal === 'signup' ? 'Sign Up' : 'Log In'}
               </button>
@@ -518,7 +518,7 @@ export default function CheckoutModal({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-linear-to-r from-orange-500 to-pink-500 text-white py-4 rounded-lg font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white py-4 rounded-lg font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Processing...' : 'Continue to Payment'}
                 </button>

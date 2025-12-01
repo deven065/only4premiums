@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ShoppingCart, Star } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductRating from '@/components/ProductRating'
@@ -27,6 +28,8 @@ interface Review {
 }
 
 export default function Home() {
+  const router = useRouter()
+  
   const product = {
     name: 'TradingView Premium',
     category: 'Trading & Finance',
@@ -397,6 +400,180 @@ export default function Home() {
               <LeaveReview onSubmit={handleNewReview} onAddPhoto={handleAddPhoto} />
             </div>
           </div>
+
+          {/* Explore More Premium Products Section */}
+          <section className="mb-16 py-16 bg-gradient-to-br from-gray-50 to-white rounded-3xl">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Explore More <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Premium Products</span>
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Discover other premium tools and services at unbeatable prices
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* LuxAlgo Premium */}
+              <div 
+                onClick={() => router.push('/products/luxalgo-premium')}
+                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
+              >
+                <div className="relative h-48 bg-gradient-to-br from-blue-900 via-blue-600 to-cyan-400 overflow-hidden">
+                  <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10">
+                    83% OFF
+                  </div>
+                  <Image 
+                    src="/luxAlgo.png" 
+                    alt="LuxAlgo Premium"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-purple-600 font-semibold bg-purple-50 px-3 py-1 rounded-full">
+                      Trading Tools
+                    </span>
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-bold text-gray-900">4.98</span>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    LuxAlgo Premium
+                  </h3>
+                  <div className="flex items-baseline space-x-2 mb-4">
+                    <span className="text-2xl font-bold text-gray-900">₹999</span>
+                    <span className="text-sm text-gray-400 line-through">₹6000</span>
+                  </div>
+                  <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2">
+                    <ShoppingCart className="h-5 w-5" />
+                    <span>View Details</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* FxReplay Premium */}
+              <div 
+                onClick={() => router.push('/products/fxreplay-premium')}
+                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
+              >
+                <div className="relative h-48 bg-white overflow-hidden">
+                  <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10">
+                    75% OFF
+                  </div>
+                  <Image 
+                    src="/FxReply.png" 
+                    alt="FxReplay Premium"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-purple-600 font-semibold bg-purple-50 px-3 py-1 rounded-full">
+                      Trading Practice
+                    </span>
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-bold text-gray-900">4.75</span>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    FxReplay Premium
+                  </h3>
+                  <div className="flex items-baseline space-x-2 mb-4">
+                    <span className="text-2xl font-bold text-gray-900">₹199</span>
+                    <span className="text-sm text-gray-400 line-through">₹799</span>
+                  </div>
+                  <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2">
+                    <ShoppingCart className="h-5 w-5" />
+                    <span>View Details</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Spotify Premium */}
+              <div 
+                onClick={() => router.push('/products/spotify-premium')}
+                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
+              >
+                <div className="relative h-48 bg-black overflow-hidden">
+                  <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10">
+                    88% OFF
+                  </div>
+                  <Image 
+                    src="/spotify.jpg" 
+                    alt="Spotify Premium"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-purple-600 font-semibold bg-purple-50 px-3 py-1 rounded-full">
+                      Music
+                    </span>
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-bold text-gray-900">4.88</span>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    Spotify Premium
+                  </h3>
+                  <div className="flex items-baseline space-x-2 mb-4">
+                    <span className="text-2xl font-bold text-gray-900">₹149</span>
+                    <span className="text-sm text-gray-400 line-through">₹1200</span>
+                  </div>
+                  <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2">
+                    <ShoppingCart className="h-5 w-5" />
+                    <span>View Details</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Trading Hub Course */}
+              <div 
+                onClick={() => router.push('/products/trading-hub-course')}
+                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
+              >
+                <div className="relative h-48 bg-gradient-to-br from-slate-900 to-slate-700 overflow-hidden">
+                  <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10">
+                    97% OFF
+                  </div>
+                  <Image 
+                    src="/TradingHub.png" 
+                    alt="Trading Hub Course"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-purple-600 font-semibold bg-purple-50 px-3 py-1 rounded-full">
+                      Education
+                    </span>
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-bold text-gray-900">5</span>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    Trading Hub Course
+                  </h3>
+                  <div className="flex items-baseline space-x-2 mb-4">
+                    <span className="text-2xl font-bold text-gray-900">₹299</span>
+                    <span className="text-sm text-gray-400 line-through">₹10000</span>
+                  </div>
+                  <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2">
+                    <ShoppingCart className="h-5 w-5" />
+                    <span>View Details</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* FAQ Section */}
           <ProductFAQ faqs={[

@@ -37,7 +37,7 @@ export default function ProductSimpleBuy({ price, originalPrice, discount, produ
 
       <button 
         onClick={() => setIsModalOpen(true)}
-        className="w-full bg-linear-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center space-x-2 mb-6"
+        className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center space-x-2 mb-6"
       >
         <ShoppingCart className="h-6 w-6" />
         <span>Buy Now</span>

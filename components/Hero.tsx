@@ -46,7 +46,7 @@ export default function Hero() {
               onClick={() => scrollToSection('about')}
               className="bg-white text-gray-800 px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-full text-base sm:text-lg font-bold hover:shadow-2xl hover:scale-105 transition-all border-2 border-gray-200 hover:border-purple-300"
             >
-              Why Choose Us
+              Why Choose Only4Premiums
             </button>
           </div>
 

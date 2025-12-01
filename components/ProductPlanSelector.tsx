@@ -16,7 +16,11 @@ interface ProductPlanSelectorProps {
 }
 
 export default function ProductPlanSelector({ plans, productName }: ProductPlanSelectorProps) {
-  const [selectedPlan, setSelectedPlan] = useState(plans[0]?.name || '')
+  // Check if this is LuxAlgo or FxReplay product
+  const isLuxAlgo = productName.toLowerCase().includes('luxalgo')
+  const isFxReplay = productName.toLowerCase().includes('fxreplay')
+  
+  const [selectedPlan, setSelectedPlan] = useState(isLuxAlgo ? 'Premium' : (plans[0]?.name || ''))
   const [selectedValidity, setSelectedValidity] = useState('')
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState('')
@@ -24,28 +28,68 @@ export default function ProductPlanSelector({ plans, productName }: ProductPlanS
 
   // Calculate savings based on selected plan and validity
   const calculateSavings = () => {
-    const plan = plans.find(p => p.name === selectedPlan)
-    if (!plan || !selectedValidity) return null
+    if (!selectedPlan || !selectedValidity) return null
 
-    const validityMultiplier: { [key: string]: number } = {
-      '1-month': 1,
-      '3-months': 3,
-      '6-months': 6,
-      '1-year': 12
-    }
+    if (isLuxAlgo) {
+      // For LuxAlgo, find the plan that matches both validity and plan type
+      const validityKey = selectedValidity === '1-month' ? '1 Month' : 'Lifetime'
+      const planKey = selectedPlan.toLowerCase().includes('ultimate') ? 'Ultimate' : 'Premium'
+      const matchingPlan = plans.find(p => p.name.includes(validityKey) && p.name.includes(planKey))
+      
+      if (!matchingPlan) return null
 
-    const multiplier = validityMultiplier[selectedValidity] || 1
-    const totalPrice = plan.price * multiplier
-    const totalOriginalPrice = plan.originalPrice * multiplier
-    const savings = totalOriginalPrice - totalPrice
-    const savingsPercentage = Math.round((savings / totalOriginalPrice) * 100)
+      const savings = matchingPlan.originalPrice - matchingPlan.price
+      const savingsPercentage = Math.round((savings / matchingPlan.originalPrice) * 100)
 
-    return {
-      totalPrice,
-      totalOriginalPrice,
-      savings,
-      savingsPercentage,
-      validityLabel: selectedValidity.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())
+      return {
+        totalPrice: matchingPlan.price,
+        totalOriginalPrice: matchingPlan.originalPrice,
+        savings,
+        savingsPercentage,
+        validityLabel: validityKey
+      }
+    } else if (isFxReplay) {
+      // For FxReplay, find the plan that matches the validity
+      const validityKey = selectedValidity === '5-days' ? '5 Days' : '1 Month'
+      const matchingPlan = plans.find(p => p.name === validityKey)
+      
+      if (!matchingPlan) return null
+
+      const savings = matchingPlan.originalPrice - matchingPlan.price
+      const savingsPercentage = Math.round((savings / matchingPlan.originalPrice) * 100)
+
+      return {
+        totalPrice: matchingPlan.price,
+        totalOriginalPrice: matchingPlan.originalPrice,
+        savings,
+        savingsPercentage,
+        validityLabel: validityKey
+      }
+    } else {
+      // For other products (TradingView)
+      const plan = plans.find(p => p.name === selectedPlan)
+      if (!plan) return null
+
+      const validityMultiplier: { [key: string]: number } = {
+        '1-month': 1,
+        '3-months': 3,
+        '6-months': 6,
+        '1-year': 12
+      }
+
+      const multiplier = validityMultiplier[selectedValidity] || 1
+      const totalPrice = plan.price * multiplier
+      const totalOriginalPrice = plan.originalPrice * multiplier
+      const savings = totalOriginalPrice - totalPrice
+      const savingsPercentage = Math.round((savings / totalOriginalPrice) * 100)
+
+      return {
+        totalPrice,
+        totalOriginalPrice,
+        savings,
+        savingsPercentage,
+        validityLabel: selectedValidity.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())
+      }
     }
   }
 
@@ -77,35 +121,68 @@ export default function ProductPlanSelector({ plans, productName }: ProductPlanS
         Click Here : How to Buy and Use it ?
       </button>
 
-      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">Select Plan</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-        {plans.map((plan, idx) => (
-          <button
-            key={idx}
-            onClick={() => setSelectedPlan(plan.name)}
-            className={`relative p-4 rounded-xl border-2 transition-all text-left ${
-              selectedPlan === plan.name
-                ? 'border-orange-500 bg-orange-50 shadow-lg scale-105'
-                : 'border-gray-200 hover:border-orange-300 hover:shadow-md'
-            }`}
-          >
-            {selectedPlan === plan.name && (
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
+      {!isFxReplay && (
+        <>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">Select Plan</h2>
+          <div className={`grid grid-cols-1 ${isLuxAlgo ? 'sm:grid-cols-2' : 'sm:grid-cols-3'} gap-3 mb-6`}>
+            {isLuxAlgo ? (
+              // For LuxAlgo, show only Premium and Ultimate options
+              ['Premium', 'Ultimate'].map((planType, idx) => {
+                const isSelected = selectedPlan === planType
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedPlan(planType)}
+                    className={`relative p-4 rounded-xl border-2 transition-all text-left ${
+                      isSelected
+                        ? 'border-orange-500 bg-orange-50 shadow-lg scale-105'
+                        : 'border-gray-200 hover:border-orange-300 hover:shadow-md'
+                    }`}
+                  >
+                    {isSelected && (
+                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                    <div className="font-bold text-gray-900 text-sm sm:text-base mb-1">{planType}</div>
+                    <div className="text-xs text-gray-600">Select validity to see price</div>
+                  </button>
+                )
+              })
+            ) : (
+              // For other products, show all plans
+              plans.map((plan, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedPlan(plan.name)}
+                  className={`relative p-4 rounded-xl border-2 transition-all text-left ${
+                    selectedPlan === plan.name
+                      ? 'border-orange-500 bg-orange-50 shadow-lg scale-105'
+                      : 'border-gray-200 hover:border-orange-300 hover:shadow-md'
+                  }`}
+                >
+                  {selectedPlan === plan.name && (
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                  <div className="font-bold text-gray-900 text-sm sm:text-base mb-1">{plan.name}</div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-xl sm:text-2xl font-bold text-orange-600">₹{plan.price}</span>
+                    {plan.originalPrice > plan.price && (
+                      <span className="text-sm text-gray-400 line-through">₹{plan.originalPrice}</span>
+                    )}
+                  </div>
+                </button>
+              ))
             )}
-            <div className="font-bold text-gray-900 text-sm sm:text-base mb-1">{plan.name}</div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-xl sm:text-2xl font-bold text-orange-600">₹{plan.price}</span>
-              {plan.originalPrice > plan.price && (
-                <span className="text-sm text-gray-400 line-through">₹{plan.originalPrice}</span>
-              )}
-            </div>
-          </button>
-        ))}
-      </div>
+          </div>
+        </>
+      )}
 
       <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">Select Validity</h2>
       <select 
@@ -114,10 +191,24 @@ export default function ProductPlanSelector({ plans, productName }: ProductPlanS
         className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 mb-4 text-gray-700 font-medium focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all"
       >
         <option value="">Choose validity period</option>
-        <option value="1-month">1 Month</option>
-        <option value="3-months">3 Months</option>
-        <option value="6-months">6 Months</option>
-        <option value="1-year">1 Year</option>
+        {isLuxAlgo ? (
+          <>
+            <option value="1-month">1 Month</option>
+            <option value="lifetime">Lifetime</option>
+          </>
+        ) : isFxReplay ? (
+          <>
+            <option value="5-days">5 Days</option>
+            <option value="1-month">1 Month</option>
+          </>
+        ) : (
+          <>
+            <option value="1-month">1 Month</option>
+            <option value="3-months">3 Months</option>
+            <option value="6-months">6 Months</option>
+            <option value="1-year">1 Year</option>
+          </>
+        )}
       </select>
 
       {/* Savings Display */}

@@ -78,7 +78,7 @@ export default function About() {
 
           {/* Trust Badges */}
           <div className="mt-20 p-8 bg-linear-to-br from-purple-50 to-pink-50 rounded-3xl">
-            <h3 className="text-2xl font-bold text-center mb-8 text-gray-900">Why Professionals Trust Us</h3>
+            <h3 className="text-2xl font-bold text-center mb-8 text-gray-900">Why Professionals Trust Only4Premiums</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div className="group">
                 <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🔒</div>

@@ -1,4 +1,4 @@
-import { Package, Clock, Shield } from 'lucide-react'
+import { Clock, Shield } from 'lucide-react'
 
 export default function ProductDeliveryInfo() {
   return (

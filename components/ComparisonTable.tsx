@@ -66,7 +66,7 @@ export default function ComparisonTable() {
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Why Choose Us?
+            Why Choose Only4Premiums?
           </h2>
           <p className="text-sm sm:text-lg text-gray-600 mx-auto px-2">
             Compare our premium TradingView service with others and see the difference in value, support, and features.
@@ -132,7 +132,7 @@ export default function ComparisonTable() {
                 <div className="space-y-1.5 text-xs">
                   <div className="flex items-start gap-2">
                     <span className="text-green-600 font-bold shrink-0">✓</span>
-                    <span className="text-gray-700"><span className="font-semibold">Us:</span> {item.us}</span>
+                    <span className="text-gray-700"><span className="font-semibold">Only4Premiums:</span> {item.us}</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-red-600 font-bold shrink-0">✗</span>
