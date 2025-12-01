@@ -346,6 +346,33 @@ html {
   background: linear-gradient(to bottom, #7c3aed, #db2777);
 }
 
+/* Smooth scrolling for modals and containers */
+.scrollbar-smooth {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+.scrollbar-smooth::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-smooth::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 10px;
+}
+
+.scrollbar-smooth::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #f97316, #ec4899);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.scrollbar-smooth::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #ea580c, #db2777);
+}
+
 /* Masonry layout using CSS columns */
 .masonry {
   column-gap: 12px;

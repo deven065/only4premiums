@@ -359,7 +359,7 @@ export default function Home() {
               <div className="border-t border-gray-200 my-4 sm:my-0"></div>
 
               {/* Plan Selector */}
-              <ProductPlanSelector plans={product.plans} />
+              <ProductPlanSelector plans={product.plans} productName={product.name} />
 
               {/* Trust Badges */}
               <ProductTrustBadges />

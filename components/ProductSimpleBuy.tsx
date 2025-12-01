@@ -1,12 +1,19 @@
+'use client'
+
+import { useState } from 'react'
 import { ShoppingCart } from 'lucide-react'
+import CheckoutModal from './CheckoutModal'
 
 interface ProductSimpleBuyProps {
   price: number
   originalPrice: number
   discount: number
+  productName: string
 }
 
-export default function ProductSimpleBuy({ price, originalPrice, discount }: ProductSimpleBuyProps) {
+export default function ProductSimpleBuy({ price, originalPrice, discount, productName }: ProductSimpleBuyProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   return (
     <>
       <div className="bg-purple-50 rounded-2xl p-6 mb-8">
@@ -28,10 +35,20 @@ export default function ProductSimpleBuy({ price, originalPrice, discount }: Pro
         </div>
       </div>
 
-      <button className="w-full bg-linear-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center space-x-2 mb-6">
+      <button 
+        onClick={() => setIsModalOpen(true)}
+        className="w-full bg-linear-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center space-x-2 mb-6"
+      >
         <ShoppingCart className="h-6 w-6" />
         <span>Buy Now</span>
       </button>
+
+      <CheckoutModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        productName={productName}
+        price={price}
+      />
     </>
   )
 }

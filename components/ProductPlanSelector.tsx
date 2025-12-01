@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import CheckoutModal from './CheckoutModal'
 
 interface ProductPlan {
   name: string
@@ -11,13 +12,15 @@ interface ProductPlan {
 
 interface ProductPlanSelectorProps {
   plans: ProductPlan[]
+  productName: string
 }
 
-export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps) {
+export default function ProductPlanSelector({ plans, productName }: ProductPlanSelectorProps) {
   const [selectedPlan, setSelectedPlan] = useState(plans[0]?.name || '')
   const [selectedValidity, setSelectedValidity] = useState('')
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Calculate savings based on selected plan and validity
   const calculateSavings = () => {
@@ -50,7 +53,7 @@ export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps)
 
   const handleBuyNow = () => {
     if (selectedPlan && selectedValidity) {
-      setShowPayment(true)
+      setIsModalOpen(true)
     } else {
       alert('Please select both plan and validity')
     }
@@ -226,6 +229,15 @@ export default function ProductPlanSelector({ plans }: ProductPlanSelectorProps)
           </button>
         </div>
       )}
+
+      <CheckoutModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        productName={productName}
+        plan={selectedPlan}
+        validity={selectedValidity?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+        price={savingsData?.totalPrice || 0}
+      />
     </div>
   )
 }

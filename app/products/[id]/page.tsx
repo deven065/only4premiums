@@ -338,12 +338,13 @@ export default function ProductPage() {
               <ProductDeliveryInfo />
 
               {product.plans ? (
-                <ProductPlanSelector plans={product.plans} />
+                <ProductPlanSelector plans={product.plans} productName={product.name} />
               ) : (
                 <ProductSimpleBuy 
                   price={product.price} 
                   originalPrice={product.originalPrice} 
-                  discount={discount} 
+                  discount={discount}
+                  productName={product.name}
                 />
               )}
 
