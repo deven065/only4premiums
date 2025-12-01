@@ -1,90 +1,47 @@
-import * as crypto from 'crypto';
-import * as fs from 'fs';
-import * as path from 'path';
+// In-memory storage for demo purposes
+// In production, this should be replaced with a proper database
+const users = new Map<string, { email: string; fullName: string; passwordHash: string; createdAt: string }>();
 
-const USERS_FILE = path.join(process.cwd(), 'data', 'users.json');
-const SECRET_KEY = process.env.AUTH_SECRET_KEY || 'your-secret-key-change-this';
-
-interface User {
-  email: string;
-  fullName: string;
-  passwordHash: string;
-  createdAt: string;
-}
-
-interface UsersData {
-  users: User[];
-}
-
-// Ensure data directory exists
-function ensureDataDir() {
-  const dataDir = path.join(process.cwd(), 'data');
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-  if (!fs.existsSync(USERS_FILE)) {
-    fs.writeFileSync(USERS_FILE, JSON.stringify({ users: [] }, null, 2));
-  }
-}
-
-// Hash password using SHA-256
-function hashPassword(password: string): string {
-  return crypto.createHmac('sha256', SECRET_KEY)
-    .update(password)
-    .digest('hex');
-}
-
-// Read users from file
-function readUsers(): UsersData {
-  ensureDataDir();
-  try {
-    const data = fs.readFileSync(USERS_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return { users: [] };
-  }
-}
-
-// Write users to file
-function writeUsers(data: UsersData): void {
-  ensureDataDir();
-  fs.writeFileSync(USERS_FILE, JSON.stringify(data, null, 2));
+// Hash password using Web Crypto API (works in edge runtime)
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // Sign up a new user
-export function signUp(email: string, fullName: string, password: string): { success: boolean; message: string } {
-  const usersData = readUsers();
+export async function signUp(email: string, fullName: string, password: string): Promise<{ success: boolean; message: string }> {
+  const emailLower = email.toLowerCase();
   
   // Check if user already exists
-  const existingUser = usersData.users.find(u => u.email.toLowerCase() === email.toLowerCase());
-  if (existingUser) {
+  if (users.has(emailLower)) {
     return { success: false, message: 'Email already registered' };
   }
 
   // Create new user
-  const newUser: User = {
-    email: email.toLowerCase(),
+  const passwordHash = await hashPassword(password);
+  users.set(emailLower, {
+    email: emailLower,
     fullName,
-    passwordHash: hashPassword(password),
+    passwordHash,
     createdAt: new Date().toISOString()
-  };
-
-  usersData.users.push(newUser);
-  writeUsers(usersData);
+  });
 
   return { success: true, message: 'Account created successfully' };
 }
 
 // Log in a user
-export function login(email: string, password: string): { success: boolean; message: string; user?: { email: string; fullName: string } } {
-  const usersData = readUsers();
+export async function login(email: string, password: string): Promise<{ success: boolean; message: string; user?: { email: string; fullName: string } }> {
+  const emailLower = email.toLowerCase();
+  const user = users.get(emailLower);
   
-  const user = usersData.users.find(u => u.email.toLowerCase() === email.toLowerCase());
   if (!user) {
     return { success: false, message: 'Invalid email or password' };
   }
 
-  const passwordHash = hashPassword(password);
+  const passwordHash = await hashPassword(password);
   if (user.passwordHash !== passwordHash) {
     return { success: false, message: 'Invalid email or password' };
   }
@@ -101,8 +58,7 @@ export function login(email: string, password: string): { success: boolean; mess
 
 // Get user by email (for verification)
 export function getUserByEmail(email: string): { email: string; fullName: string } | null {
-  const usersData = readUsers();
-  const user = usersData.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  const user = users.get(email.toLowerCase());
   
   if (!user) return null;
   

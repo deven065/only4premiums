@@ -22,12 +22,12 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const result = signUp(email, fullName, password);
+      const result = await signUp(email, fullName, password);
       return NextResponse.json(result, { status: result.success ? 200 : 400 });
     }
 
     if (action === 'login') {
-      const result = login(email, password);
+      const result = await login(email, password);
       return NextResponse.json(result, { status: result.success ? 200 : 401 });
     }
 
