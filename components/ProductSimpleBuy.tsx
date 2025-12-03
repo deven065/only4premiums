@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ShoppingCart } from 'lucide-react'
 import CheckoutModal from './CheckoutModal'
 
@@ -13,6 +13,19 @@ interface ProductSimpleBuyProps {
 
 export default function ProductSimpleBuy({ price, originalPrice, discount, productName }: ProductSimpleBuyProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // Open checkout when global trigger is dispatched
+  useEffect(() => {
+    const onTrigger = () => setIsModalOpen(true)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('trigger-buy-now', onTrigger as EventListener)
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('trigger-buy-now', onTrigger as EventListener)
+      }
+    }
+  }, [])
 
   return (
     <>

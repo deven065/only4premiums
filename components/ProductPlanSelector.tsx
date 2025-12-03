@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CheckoutModal from './CheckoutModal'
 
 interface ProductPlan {
@@ -25,6 +25,14 @@ export default function ProductPlanSelector({ plans, productName }: ProductPlanS
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // Notify page when selection is ready
+  useEffect(() => {
+    const ready = Boolean(selectedPlan) && Boolean(selectedValidity)
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('buy-ready', { detail: ready }))
+    }
+  }, [selectedPlan, selectedValidity])
 
   // Calculate savings based on selected plan and validity
   const calculateSavings = () => {
@@ -102,6 +110,21 @@ export default function ProductPlanSelector({ plans, productName }: ProductPlanS
       alert('Please select both plan and validity')
     }
   }
+
+  // Listen for global trigger from floating button
+  useEffect(() => {
+    const onTrigger = () => {
+      handleBuyNow()
+    }
+    if (typeof window !== 'undefined') {
+      window.addEventListener('trigger-buy-now', onTrigger as EventListener)
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('trigger-buy-now', onTrigger as EventListener)
+      }
+    }
+  }, [selectedPlan, selectedValidity])
 
   const handlePayment = () => {
     if (!selectedPayment) {

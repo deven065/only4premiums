@@ -79,6 +79,52 @@ button::before {
 
 button:active::before {
   width: 300px;
+  /* Animated scanline moving right to left for trust banner */
+  @keyframes marquee-line {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  .scanline-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 200%;
+    background-image: linear-gradient(to right, transparent 0%, #fb923c 15%, #f97316 50%, #fb923c 85%, transparent 100%);
+    animation: marquee-line 2.8s linear infinite;
+    opacity: 0.9;
+  }
+
+  /* Marquee animation for trust banner content */
+  @keyframes marquee-track {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .marquee-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .marquee-track {
+    display: flex;
+    width: 200%;
+    animation: marquee-track 18s linear infinite;
+  }
+
+  .marquee-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 50%;
+  }
   height: 300px;
   transition: 0s;
 }

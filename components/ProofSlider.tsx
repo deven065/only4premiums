@@ -1,5 +1,7 @@
 'use client'
 
+import { useRef, useState } from 'react'
+
 export default function ProofSlider() {
   // Array of proof images - you can replace these URLs with actual proof images
   const proofImages = [
@@ -23,6 +25,43 @@ export default function ProofSlider() {
   // Duplicate the array for seamless infinite scroll
   const duplicatedImages = [...proofImages, ...proofImages]
 
+  // Drag state to allow manual swipe and pause auto-scroll
+  const [dragX, setDragX] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const startXRef = useRef<number | null>(null)
+  const lastXRef = useRef<number>(0)
+  const velocityRef = useRef<number>(0)
+  const lastTimeRef = useRef<number>(0)
+
+  const beginDrag = (clientX: number) => {
+    startXRef.current = clientX
+    lastXRef.current = clientX
+    lastTimeRef.current = performance.now()
+    velocityRef.current = 0
+    setIsDragging(true)
+  }
+  const handleMove = (clientX: number) => {
+    if (startXRef.current == null) return
+    const now = performance.now()
+    const deltaX = clientX - lastXRef.current
+    const dt = Math.max(now - lastTimeRef.current, 1)
+    velocityRef.current = (deltaX / dt) * 1000
+    lastTimeRef.current = now
+    lastXRef.current = clientX
+    setDragX(clientX - (startXRef.current ?? clientX))
+  }
+  const endDrag = () => {
+    setIsDragging(false)
+    // apply inertial flick: nudge a bit based on velocity
+    const inertia = Math.max(-120, Math.min(120, velocityRef.current * 0.1))
+    setDragX((prev) => {
+      const next = prev + inertia
+      return Math.abs(next) < 12 ? 0 : next
+    })
+    // snap back gently after inertial nudge
+    setTimeout(() => setDragX(0), 160)
+  }
+
   return (
     <section className="py-16 md:py-20 bg-white overflow-hidden">
       <div className="container mx-auto px-4 mb-12">
@@ -40,14 +79,27 @@ export default function ProofSlider() {
       </div>
 
       {/* Infinite Scrolling Container */}
-      <div className="relative">
+      <div className="relative select-none">
         {/* Gradient overlays for fade effect */}
         <div className="absolute left-0 top-0 bottom-0 w-32 bg-linear-to-r from-white to-transparent z-10"></div>
         <div className="absolute right-0 top-0 bottom-0 w-32 bg-linear-to-l from-white to-transparent z-10"></div>
 
         {/* Scrolling wrapper */}
         <div className="overflow-hidden">
-          <div className="flex animate-scroll-infinite">
+          <div
+            className={`flex ${isDragging ? '' : 'animate-scroll-infinite'}`}
+            style={{
+              transform: `translate3d(${dragX}px,0,0)`,
+              transition: isDragging ? 'none' : 'transform 240ms ease-out'
+            }}
+            onMouseDown={(e) => { e.preventDefault(); beginDrag(e.clientX) }}
+            onMouseMove={(e) => isDragging && handleMove(e.clientX)}
+            onMouseUp={endDrag}
+            onMouseLeave={() => isDragging && endDrag()}
+            onTouchStart={(e) => beginDrag(e.touches[0].clientX)}
+            onTouchMove={(e) => handleMove(e.touches[0].clientX)}
+            onTouchEnd={endDrag}
+          >
             {duplicatedImages.map((image, index) => (
               <div
                 key={`${image.id}-${index}`}

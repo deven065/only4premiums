@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, ShoppingCart, Star } from 'lucide-react'
+import { FaCartShopping } from 'react-icons/fa6'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductRating from '@/components/ProductRating'
@@ -351,6 +352,7 @@ export default function ProductPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
+  const [canShowStickyBuy, setCanShowStickyBuy] = useState(false)
 
   const product = products[productId]
   const allImages = product ? [...new Set([product.image, ...(product.screenshots || [])])].filter(img => img && img.trim() !== '') : []
@@ -401,6 +403,22 @@ export default function ProductPage() {
     setTouchEnd(0)
   }
 
+  // Listen for plan+validity readiness to show sticky Buy Now
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const custom = e as CustomEvent<boolean>
+      setCanShowStickyBuy(Boolean(custom.detail))
+    }
+    if (typeof window !== 'undefined') {
+      window.addEventListener('buy-ready', handler as EventListener)
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('buy-ready', handler as EventListener)
+      }
+    }
+  }, [])
+
   if (!product) {
     return (
       <div className="min-h-screen bg-white">
@@ -422,41 +440,42 @@ export default function ProductPage() {
     <div className="min-h-screen bg-white">
       <Header />
       
-      {/* Trust Banner */}
-      <div className="bg-gray-900 border-y border-gray-700 py-2.5 sm:py-3 mt-16 sm:mt-20">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm overflow-x-auto">
-            <div className="flex items-center gap-1.5 text-white whitespace-nowrap">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+      {/* Trust Banner - positioned directly under fixed header */}
+      <div className="fixed top-[60px] sm:top-[68px] left-0 right-0 bg-gray-900 border-y border-gray-700 h-[26px] sm:h-[30px] py-0 scanline-wrapper z-40">
+        <div className="scanline" />
+        <div className="container mx-auto px-4 h-full">
+          <div className="flex items-center justify-center h-full gap-1.5 sm:gap-2.5 text-[9px] sm:text-[11px] overflow-hidden whitespace-nowrap leading-none">
+            <div className="flex items-center gap-0.5 sm:gap-1 text-white whitespace-nowrap">
+              <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
                 </svg>
               </div>
-              <span className="font-medium">Secure</span>
+              <span className="font-medium leading-none">Secure</span>
             </div>
-            <div className="w-px h-6 bg-gray-700 hidden sm:block"></div>
-            <div className="flex items-center gap-1.5 text-white whitespace-nowrap">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+            <div className="w-px h-2.5 sm:h-3 bg-gray-700"></div>
+            <div className="flex items-center gap-0.5 sm:gap-1 text-white whitespace-nowrap">
+              <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
                 </svg>
               </div>
-              <span className="font-medium">Instant</span>
+              <span className="font-medium leading-none">Instant</span>
             </div>
-            <div className="w-px h-6 bg-gray-700 hidden sm:block"></div>
-            <div className="flex items-center gap-1.5 text-white whitespace-nowrap">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+            <div className="w-px h-2.5 sm:h-3 bg-gray-700"></div>
+            <div className="flex items-center gap-0.5 sm:gap-1 text-white whitespace-nowrap">
+              <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
                 </svg>
               </div>
-              <span className="font-medium">24/7 Support</span>
+              <span className="font-medium leading-none">Support</span>
             </div>
           </div>
         </div>
       </div>
       
-      <main className="pt-4 sm:pt-8 pb-8 sm:pb-16">
+      <main className="pt-[94px] sm:pt-[106px] pb-8 sm:pb-16">
         <div className="container mx-auto px-4 lg:px-0">
           {/* Breadcrumb */}
           <nav className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600 mb-4 sm:mb-8 lg:px-4">
@@ -903,21 +922,28 @@ export default function ProductPage() {
       {/* Floating Chat Button */}
       <FloatingChatButton />
 
-      {/* Sticky Buy Now Button */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-300 p-4 md:hidden">
-        <button 
-          onClick={() => {
-            // Scroll to plan selector
-            const planSelector = document.querySelector('.product-plan-selector')
-            if (planSelector) {
-              planSelector.scrollIntoView({ behavior: 'smooth', block: 'center' })
-            }
-          }}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 font-bold text-lg transition-colors"
-        >
-          Buy Now
-        </button>
-      </div>
+      {/* Sticky Buy Now Button (only after plan + validity chosen) */}
+      {canShowStickyBuy && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+          <div className="mx-4 mb-[max(env(safe-area-inset-bottom),1rem)] rounded-2xl backdrop-blur-xl bg-white/80 border border-gray-200 shadow-[0_-6px_20px_rgba(0,0,0,0.12)] p-3">
+            <button 
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new Event('trigger-buy-now'))
+                }
+              }}
+              className="w-full py-3.5 sm:py-4 px-4 rounded-xl font-bold text-base sm:text-lg text-white 
+              bg-orange-500 hover:bg-orange-600 
+              shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-600/30 
+              transition-all duration-200 flex items-center justify-center gap-2"
+            >
+                <FaCartShopping className="w-5 h-5" />
+              <span>Buy Now</span>
+            </button>
+            <p className="mt-2 text-center text-xs text-gray-600">Complete your order securely</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

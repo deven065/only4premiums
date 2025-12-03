@@ -23,8 +23,6 @@ export default function CheckoutModal({
 }: CheckoutModalProps) {
   const [step, setStep] = useState<'information' | 'payment' | 'finish'>('information')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showAuthModal, setShowAuthModal] = useState<'login' | 'signup' | null>('login')
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'crypto' | null>(null)
   const [formData, setFormData] = useState({
     email: '',
@@ -33,30 +31,9 @@ export default function CheckoutModal({
     state: '',
     whatsappNumber: ''
   })
-  const [authData, setAuthData] = useState({
-    email: '',
-    password: '',
-    fullName: ''
-  })
+  
 
-  // Check for saved user session on component mount
-  useEffect(() => {
-    const savedUser = localStorage.getItem('only4premiums_user')
-    if (savedUser) {
-      try {
-        const userData = JSON.parse(savedUser)
-        setFormData(prev => ({
-          ...prev,
-          email: userData.email,
-          fullName: userData.fullName
-        }))
-        setIsLoggedIn(true)
-      } catch (error) {
-        console.error('Error loading saved user:', error)
-        localStorage.removeItem('only4premiums_user')
-      }
-    }
-  }, [])
+  // No login/signup: do not manage user session
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -184,187 +161,8 @@ export default function CheckoutModal({
     onClose()
   }
 
-  const handleAuthSubmit = async (e: React.FormEvent, type: 'login' | 'signup') => {
-    e.preventDefault()
-    
-    if (type === 'signup') {
-      if (!authData.email || !authData.password || !authData.fullName) {
-        alert('Please fill in all fields')
-        return
-      }
-    } else {
-      if (!authData.email || !authData.password) {
-        alert('Please fill in all fields')
-        return
-      }
-    }
-
-    try {
-      // Import auth functions dynamically
-      const { signUp, login } = await import('@/lib/auth')
-      
-      if (type === 'signup') {
-        const result = await signUp(authData.email, authData.fullName, authData.password)
-        
-        if (result.success) {
-          const userData = {
-            email: authData.email,
-            fullName: authData.fullName
-          }
-          localStorage.setItem('only4premiums_user', JSON.stringify(userData))
-          
-          setFormData({
-            ...formData,
-            email: userData.email,
-            fullName: userData.fullName
-          })
-          
-          setIsLoggedIn(true)
-          setShowAuthModal(null)
-          alert('Account created successfully!')
-        } else {
-          alert(result.message || 'Signup failed')
-        }
-      } else {
-        const result = await login(authData.email, authData.password)
-        
-        if (result.success && result.user) {
-          const userData = {
-            email: result.user.email,
-            fullName: result.user.fullName
-          }
-          localStorage.setItem('only4premiums_user', JSON.stringify(userData))
-          
-          setFormData({
-            ...formData,
-            email: userData.email,
-            fullName: userData.fullName
-          })
-          
-          setIsLoggedIn(true)
-          setShowAuthModal(null)
-          alert('Logged in successfully!')
-        } else {
-          alert(result.message || 'Login failed')
-        }
-      }
-    } catch (error) {
-      console.error('Auth error:', error)
-      alert('Authentication error. Please try again.')
-    }
-  }
+  // No authentication flow: login/signup removed
   if (!isOpen) return null
-
-  // Show login modal if not logged in
-  if (!isLoggedIn) {
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeInUp">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">
-                {showAuthModal === 'signup' ? 'Sign Up' : 'Log In'}
-              </h3>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-              <p className="text-sm text-orange-800">
-                <strong>Please log in or sign up</strong> to continue with your purchase.
-              </p>
-            </div>
-
-            <form onSubmit={(e) => handleAuthSubmit(e, showAuthModal === 'signup' ? 'signup' : 'login')} className="space-y-4">
-              {showAuthModal === 'signup' && (
-                <div>
-                  <label htmlFor="auth-fullName" className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="auth-fullName"
-                    value={authData.fullName}
-                    onChange={(e) => setAuthData({ ...authData, fullName: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all placeholder:text-gray-400 text-gray-900"
-                    placeholder="Enter your full name"
-                    required
-                  />
-                </div>
-              )}
-
-              <div>
-                <label htmlFor="auth-email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  id="auth-email"
-                  value={authData.email}
-                  onChange={(e) => setAuthData({ ...authData, email: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all placeholder:text-gray-400 text-gray-900"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-
-              <div>
-                <label htmlFor="auth-password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  id="auth-password"
-                  value={authData.password}
-                  onChange={(e) => setAuthData({ ...authData, password: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all placeholder:text-gray-400 text-gray-900"
-                  placeholder="Enter your password"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white py-3 rounded-lg font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all"
-              >
-                {showAuthModal === 'signup' ? 'Sign Up' : 'Log In'}
-              </button>
-
-              <p className="text-center text-sm text-gray-600">
-                {showAuthModal === 'signup' ? (
-                  <>
-                    Already have an account?{' '}
-                    <button
-                      type="button"
-                      onClick={() => setShowAuthModal('login')}
-                      className="text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      Log in
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    Don&apos;t have an account?{' '}
-                    <button
-                      type="button"
-                      onClick={() => setShowAuthModal('signup')}
-                      className="text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      Sign up
-                    </button>
-                  </>
-                )}
-              </p>
-            </form>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeInUp overflow-hidden">
@@ -452,27 +250,9 @@ export default function CheckoutModal({
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <h2 className="text-2xl font-bold text-gray-900">Customer information</h2>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        localStorage.removeItem('only4premiums_user')
-                        setIsLoggedIn(false)
-                        setFormData({
-                          email: '',
-                          fullName: '',
-                          country: '',
-                          state: '',
-                          whatsappNumber: ''
-                        })
-                      }}
-                      className="text-xs text-blue-600 hover:text-blue-700 font-medium underline"
-                    >
-                      Logout
-                    </button>
+                    
                   </div>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Logged in as <span className="font-semibold text-gray-900">{formData.email}</span>
-                  </p>
+                  
                   
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -899,108 +679,7 @@ export default function CheckoutModal({
         )}
       </div>
 
-      {/* Login/Signup Modal */}
-      {showAuthModal && (
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-10">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900">
-                  {showAuthModal === 'login' ? 'Log In' : 'Sign Up'}
-                </h3>
-                <button
-                  onClick={() => setShowAuthModal(null)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              <form onSubmit={(e) => handleAuthSubmit(e, showAuthModal)} className="space-y-4">
-                {showAuthModal === 'signup' && (
-                  <div>
-                    <label htmlFor="auth-fullName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="auth-fullName"
-                      value={authData.fullName}
-                      onChange={(e) => setAuthData({ ...authData, fullName: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all placeholder:text-gray-400 text-gray-900"
-                      placeholder="Enter your full name"
-                      required
-                    />
-                  </div>
-                )}
-
-                <div>
-                  <label htmlFor="auth-email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    id="auth-email"
-                    value={authData.email}
-                    onChange={(e) => setAuthData({ ...authData, email: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all placeholder:text-gray-400 text-gray-900"
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="auth-password" className="block text-sm font-medium text-gray-700 mb-2">
-                    Password <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="password"
-                    id="auth-password"
-                    value={authData.password}
-                    onChange={(e) => setAuthData({ ...authData, password: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all placeholder:text-gray-400 text-gray-900"
-                    placeholder="Enter your password"
-                    required
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-linear-to-r from-orange-500 to-pink-500 text-white py-3 rounded-lg font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all"
-                >
-                  {showAuthModal === 'login' ? 'Log In' : 'Sign Up'}
-                </button>
-
-                <p className="text-center text-sm text-gray-600">
-                  {showAuthModal === 'login' ? (
-                    <>
-                      Don&apos;t have an account?{' '}
-                      <button
-                        type="button"
-                        onClick={() => setShowAuthModal('signup')}
-                        className="text-blue-600 hover:text-blue-700 font-medium"
-                      >
-                        Sign up
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      Already have an account?{' '}
-                      <button
-                        type="button"
-                        onClick={() => setShowAuthModal('login')}
-                        className="text-blue-600 hover:text-blue-700 font-medium"
-                      >
-                        Log in
-                      </button>
-                    </>
-                  )}
-                </p>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </div>
   )
 }
