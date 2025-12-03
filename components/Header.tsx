@@ -34,7 +34,7 @@ export default function Header() {
               height={32}
               className="sm:w-10 sm:h-10 group-hover:scale-110 transition-all duration-300 group-hover:rotate-3"
             />
-            <span className="text-lg sm:text-xl md:text-2xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">
+            <span className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">
               Only4Premiums
             </span>
           </button>

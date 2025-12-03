@@ -80,7 +80,7 @@ export default function Testimonials() {
               className="group bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-200 hover:border-purple-300 hover:-translate-y-2 relative overflow-hidden"
             >
               {/* Decorative gradient */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-purple-600 via-pink-600 to-blue-600"></div>
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600"></div>
               
               {/* Quote icon */}
               <div className="absolute top-6 right-6 opacity-10 group-hover:opacity-20 transition-opacity">

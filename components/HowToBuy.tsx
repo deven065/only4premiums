@@ -38,7 +38,7 @@ export default function HowToBuy() {
           <div key={index} className="relative group">
             {/* Connector Line for desktop */}
             {index < steps.length - 1 && (
-              <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-0.5 bg-linear-to-r from-purple-300 to-transparent z-0" />
+              <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-purple-300 to-transparent z-0" />
             )}
             
             <div className="relative bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 z-10">

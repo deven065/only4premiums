@@ -224,12 +224,12 @@ export default function CustomerReviews({
       {/* Image Lightbox Modal */}
       {lightboxOpen && (
         <div 
-          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4"
           onClick={() => setLightboxOpen(false)}
         >
           <button
             onClick={() => setLightboxOpen(false)}
-            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-[10000]"
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-[110]"
             aria-label="Close"
           >
             <X className="w-8 h-8" />

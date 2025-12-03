@@ -419,7 +419,7 @@ export default function ProductsPage() {
           <div className="mt-24 mb-16">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-gray-900">
-                Explore More <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Premium Products</span>
+                Explore More <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Premium Products</span>
               </h2>
               <p className="text-lg text-gray-600">
                 Discover other premium tools and services at unbeatable prices
@@ -433,7 +433,7 @@ export default function ProductsPage() {
                   onClick={() => router.push(`/products/${product.id}`)}
                   className="relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group border-2 border-gray-100 hover:border-purple-300 hover:-translate-y-2 cursor-pointer"
                 >
-                  <div className="absolute top-4 right-4 bg-linear-to-r from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-full text-xs font-bold z-20 shadow-lg">
+                  <div className="absolute top-4 right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-full text-xs font-bold z-20 shadow-lg">
                     {discount(product.originalPrice, product.price)}% OFF
                   </div>
                   
@@ -471,7 +471,7 @@ export default function ProductsPage() {
                       </span>
                     </div>
 
-                    <button className="w-full bg-linear-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2">
+                    <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2">
                       <ShoppingCart className="h-4 w-4" />
                       <span>View Details</span>
                     </button>

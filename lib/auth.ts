@@ -1,12 +1,5 @@
 import { getAllUsers, saveAllUsers } from './userStorage';
 
-interface User {
-  email: string;
-  fullName: string;
-  passwordHash: string;
-  createdAt: string;
-}
-
 // Hash password using Web Crypto API (works in edge runtime)
 async function hashPassword(password: string): Promise<string> {
   const encoder = new TextEncoder();

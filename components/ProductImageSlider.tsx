@@ -96,7 +96,10 @@ export default function ProductImageSlider({ images, productName }: ProductImage
     setIsDragging(false)
     setDragX(0)
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-      try { (navigator as any).vibrate(10) } catch {}
+      try { 
+        const nav = navigator as Navigator & { vibrate: (pattern: number | number[]) => boolean }
+        nav.vibrate(10)
+      } catch {}
     }
   }
 

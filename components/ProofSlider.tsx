@@ -81,7 +81,7 @@ export default function ProofSlider() {
       {/* Infinite Scrolling Container */}
       <div className="relative select-none">
         {/* Gradient overlays for fade effect */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-linear-to-r from-white to-transparent z-10"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10"></div>
         <div className="absolute right-0 top-0 bottom-0 w-32 bg-linear-to-l from-white to-transparent z-10"></div>
 
         {/* Scrolling wrapper */}
@@ -129,7 +129,7 @@ export default function ProofSlider() {
 
       {/* CTA Section */}
       <div className="container mx-auto px-4 mt-16 text-center">
-        <div className="bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl p-8 md:p-12 text-white shadow-2xl">
+        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 md:p-12 text-white shadow-2xl">
           <h3 className="text-3xl md:text-4xl font-bold mb-4">Ready to Join Our Happy Customers?</h3>
           <p className="text-lg md:text-xl mb-6 text-purple-100">
             Experience premium quality at unbeatable prices with instant delivery

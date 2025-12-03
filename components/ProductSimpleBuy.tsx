@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import { ShoppingCart } from 'lucide-react'
 
 interface ProductSimpleBuyProps {
@@ -12,10 +12,10 @@ interface ProductSimpleBuyProps {
 }
 
 export default function ProductSimpleBuy({ price, originalPrice, discount, productName, productImage }: ProductSimpleBuyProps) {
-  const handleBuyNow = () => {
+  const handleBuyNow = useCallback(() => {
     const checkoutUrl = `/checkout?product=${encodeURIComponent(productName)}&price=${price}&image=${encodeURIComponent(productImage || '')}`
     window.open(checkoutUrl, '_blank')
-  }
+  }, [productName, price, productImage])
 
   // Open checkout when global trigger is dispatched
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function ProductSimpleBuy({ price, originalPrice, discount, produ
         window.removeEventListener('trigger-buy-now', onTrigger as EventListener)
       }
     }
-  }, [productName, price, productImage])
+  }, [handleBuyNow])
 
   return (
     <>

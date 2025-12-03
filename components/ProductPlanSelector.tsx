@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 interface ProductPlan {
   name: string
@@ -102,14 +102,14 @@ export default function ProductPlanSelector({ plans, productName, productImage }
 
   const savingsData = calculateSavings()
 
-  const handleBuyNow = () => {
+  const handleBuyNow = useCallback(() => {
     if (selectedPlan && selectedValidity && savingsData) {
       const checkoutUrl = `/checkout?product=${encodeURIComponent(productName)}&plan=${encodeURIComponent(selectedPlan)}&validity=${encodeURIComponent(savingsData.validityLabel)}&price=${savingsData.totalPrice}&image=${encodeURIComponent(productImage || '')}`
       window.open(checkoutUrl, '_blank')
     } else {
       alert('Please select both plan and validity')
     }
-  }
+  }, [selectedPlan, selectedValidity, savingsData, productName, productImage])
 
   // Listen for global trigger from floating button
   useEffect(() => {
@@ -124,7 +124,7 @@ export default function ProductPlanSelector({ plans, productName, productImage }
         window.removeEventListener('trigger-buy-now', onTrigger as EventListener)
       }
     }
-  }, [selectedPlan, selectedValidity])
+  }, [selectedPlan, selectedValidity, handleBuyNow])
 
   const handlePayment = () => {
     if (!selectedPayment) {
