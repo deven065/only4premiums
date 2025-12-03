@@ -154,9 +154,17 @@ export default function ProductsPage() {
 
   const [reviews, setReviews] = useState<Review[]>(initialReviews)
   const [reviewImages] = useState<string[]>([
-    '/TradingHub.png',
-    '/TradingHub.png',
-    '/TradingHub.png'
+    '/review (1).jpeg',
+    '/review (2).jpeg',
+    '/review (3).jpeg',
+    '/review (4).jpeg',
+    '/review (5).jpeg',
+    '/review (6).jpeg',
+    '/review (7).jpeg',
+    '/review (8).jpeg',
+    '/review (9).jpeg',
+    '/review (10).jpeg',
+    '/review (11).jpeg'
   ])
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [touchStart, setTouchStart] = useState(0)
@@ -345,7 +353,7 @@ export default function ProductsPage() {
 
               <div className="border-t border-gray-200 my-4 sm:my-0"></div>
 
-              <ProductPlanSelector plans={featuredProduct.plans} productName={featuredProduct.name} />
+              <ProductPlanSelector plans={featuredProduct.plans} productName={featuredProduct.name} productImage={featuredProduct.image} />
 
               <ProductTrustBadges />
             </div>

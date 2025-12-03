@@ -1,22 +1,25 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { ShoppingCart } from 'lucide-react'
-import CheckoutModal from './CheckoutModal'
 
 interface ProductSimpleBuyProps {
   price: number
   originalPrice: number
   discount: number
   productName: string
+  productImage?: string
 }
 
-export default function ProductSimpleBuy({ price, originalPrice, discount, productName }: ProductSimpleBuyProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+export default function ProductSimpleBuy({ price, originalPrice, discount, productName, productImage }: ProductSimpleBuyProps) {
+  const handleBuyNow = () => {
+    const checkoutUrl = `/checkout?product=${encodeURIComponent(productName)}&price=${price}&image=${encodeURIComponent(productImage || '')}`
+    window.open(checkoutUrl, '_blank')
+  }
 
   // Open checkout when global trigger is dispatched
   useEffect(() => {
-    const onTrigger = () => setIsModalOpen(true)
+    const onTrigger = () => handleBuyNow()
     if (typeof window !== 'undefined') {
       window.addEventListener('trigger-buy-now', onTrigger as EventListener)
     }
@@ -25,7 +28,7 @@ export default function ProductSimpleBuy({ price, originalPrice, discount, produ
         window.removeEventListener('trigger-buy-now', onTrigger as EventListener)
       }
     }
-  }, [])
+  }, [productName, price, productImage])
 
   return (
     <>
@@ -49,19 +52,12 @@ export default function ProductSimpleBuy({ price, originalPrice, discount, produ
       </div>
 
       <button 
-        onClick={() => setIsModalOpen(true)}
+        onClick={handleBuyNow}
         className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center space-x-2 mb-6"
       >
         <ShoppingCart className="h-6 w-6" />
         <span>Buy Now</span>
       </button>
-
-      <CheckoutModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        productName={productName}
-        price={price}
-      />
     </>
   )
 }

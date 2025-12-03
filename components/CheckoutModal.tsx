@@ -11,6 +11,7 @@ interface CheckoutModalProps {
   plan?: string
   validity?: string
   price: number
+  productImage?: string
 }
 
 export default function CheckoutModal({ 
@@ -19,7 +20,8 @@ export default function CheckoutModal({
   productName, 
   plan, 
   validity, 
-  price 
+  price,
+  productImage 
 }: CheckoutModalProps) {
   const [step, setStep] = useState<'information' | 'payment' | 'finish'>('information')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -388,7 +390,16 @@ export default function CheckoutModal({
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-2">
-                            <div className="w-12 h-12 bg-gray-200 rounded-lg shrink-0"></div>
+                            <div className="w-12 h-12 bg-gray-200 rounded-lg shrink-0 relative overflow-hidden">
+                              {productImage && (
+                                <Image 
+                                  src={productImage} 
+                                  alt={productName}
+                                  fill
+                                  className="object-cover"
+                                />
+                              )}
+                            </div>
                             <div className="flex-1">
                               <p className="font-medium text-gray-900 text-sm">{productName}</p>
                               <p className="text-xs text-gray-500">× 1</p>

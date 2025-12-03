@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Star, ChevronDown } from 'lucide-react'
+import { Star, ChevronDown, X } from 'lucide-react'
 import Image from 'next/image'
 
 interface Review {
@@ -36,6 +36,8 @@ export default function CustomerReviews({
   reviewImages = []
 }: CustomerReviewsProps) {
   const [visibleCount, setVisibleCount] = useState(3)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [lightboxImage, setLightboxImage] = useState('')
   const displayedReviews = reviews.slice(0, visibleCount)
   const hasMore = visibleCount < reviews.length
 
@@ -120,7 +122,11 @@ export default function CustomerReviews({
                 {reviewImages.map((img, idx) => (
                   <div
                     key={idx}
-                    className="overflow-hidden border border-gray-300"
+                    onClick={() => {
+                      setLightboxImage(img)
+                      setLightboxOpen(true)
+                    }}
+                    className="overflow-hidden border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity"
                   >
                     <div className="relative w-full aspect-square">
                       <Image
@@ -214,6 +220,33 @@ export default function CustomerReviews({
           )}
         </div>
       </div>
+
+      {/* Image Lightbox Modal */}
+      {lightboxOpen && (
+        <div 
+          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center p-4"
+          onClick={() => setLightboxOpen(false)}
+        >
+          <button
+            onClick={() => setLightboxOpen(false)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-[10000]"
+            aria-label="Close"
+          >
+            <X className="w-8 h-8" />
+          </button>
+          <div 
+            className="relative max-w-[90vw] max-h-[90vh] w-full h-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={lightboxImage}
+              alt="Review image"
+              fill
+              className="object-contain"
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

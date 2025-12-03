@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import CheckoutModal from './CheckoutModal'
 
 interface ProductPlan {
   name: string
@@ -13,9 +12,10 @@ interface ProductPlan {
 interface ProductPlanSelectorProps {
   plans: ProductPlan[]
   productName: string
+  productImage?: string
 }
 
-export default function ProductPlanSelector({ plans, productName }: ProductPlanSelectorProps) {
+export default function ProductPlanSelector({ plans, productName, productImage }: ProductPlanSelectorProps) {
   // Check if this is LuxAlgo or FxReplay product
   const isLuxAlgo = productName.toLowerCase().includes('luxalgo')
   const isFxReplay = productName.toLowerCase().includes('fxreplay')
@@ -24,7 +24,6 @@ export default function ProductPlanSelector({ plans, productName }: ProductPlanS
   const [selectedValidity, setSelectedValidity] = useState('')
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Notify page when selection is ready
   useEffect(() => {
@@ -104,8 +103,9 @@ export default function ProductPlanSelector({ plans, productName }: ProductPlanS
   const savingsData = calculateSavings()
 
   const handleBuyNow = () => {
-    if (selectedPlan && selectedValidity) {
-      setIsModalOpen(true)
+    if (selectedPlan && selectedValidity && savingsData) {
+      const checkoutUrl = `/checkout?product=${encodeURIComponent(productName)}&plan=${encodeURIComponent(selectedPlan)}&validity=${encodeURIComponent(savingsData.validityLabel)}&price=${savingsData.totalPrice}&image=${encodeURIComponent(productImage || '')}`
+      window.open(checkoutUrl, '_blank')
     } else {
       alert('Please select both plan and validity')
     }
@@ -344,14 +344,6 @@ export default function ProductPlanSelector({ plans, productName }: ProductPlanS
         </div>
       )}
 
-      <CheckoutModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        productName={productName}
-        plan={selectedPlan}
-        validity={selectedValidity?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-        price={savingsData?.totalPrice || 0}
-      />
     </div>
   )
 }
