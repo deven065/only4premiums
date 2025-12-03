@@ -15,7 +15,10 @@ export async function POST(request: Request) {
       plan,
       validity,
       price,
-      timestamp
+      timestamp,
+      paymentProof,
+      paymentMethod,
+      orderId
     } = data
 
     // Log the lead information
@@ -29,7 +32,10 @@ export async function POST(request: Request) {
       plan,
       validity,
       price,
-      timestamp
+      timestamp,
+      hasPaymentProof: Boolean(paymentProof),
+      paymentMethod,
+      orderId
     })
 
     // Send email notification to website owner
@@ -50,14 +56,24 @@ export async function POST(request: Request) {
           plan,
           validity,
           price,
-          timestamp
+          timestamp,
+          paymentMethod,
+          orderId
         })
+
+        const attachments: Array<{ filename: string; content: string }> = []
+        if (paymentProof && typeof paymentProof === 'string') {
+          // paymentProof is expected as a data URL (base64). Strip prefix and attach.
+          const base64 = paymentProof.split(',')[1] || paymentProof
+          attachments.push({ filename: 'payment-proof.jpg', content: base64 })
+        }
 
         await resend.emails.send({
           from: process.env.EMAIL_FROM || 'leads@only4premiums.com',
           to: process.env.OWNER_EMAIL || 'owner@only4premiums.com',
           subject: `🎯 New Lead: ${fullName} - ${productName}`,
-          html: emailHtml
+          html: emailHtml,
+          attachments: attachments.length ? attachments : undefined
         })
 
         console.log('Email sent successfully via Resend')
@@ -67,15 +83,13 @@ export async function POST(request: Request) {
       }
     }
 
-    // Method 2: Using Nodemailer (Alternative)
-    // Uncomment and configure if you prefer using Nodemailer with Gmail/SMTP
-    /*
+    // Method 2: Using Nodemailer (Gmail/SMTP)
     if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
       try {
         const nodemailer = await import('nodemailer')
         
-        const transporter = nodemailer.createTransport({
-          service: 'gmail', // or 'smtp'
+        const transporter = nodemailer.default.createTransport({
+          service: 'gmail',
           auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASSWORD
@@ -92,22 +106,30 @@ export async function POST(request: Request) {
           plan,
           validity,
           price,
-          timestamp
+          timestamp,
+          paymentMethod,
+          orderId
         })
 
-        await transporter.sendMail({
+        const mailOptions: any = {
           from: process.env.EMAIL_USER,
           to: process.env.OWNER_EMAIL,
           subject: `🎯 New Lead: ${fullName} - ${productName}`,
           html: emailHtml
-        })
+        }
+
+        if (paymentProof && typeof paymentProof === 'string') {
+          const base64 = paymentProof.split(',')[1] || paymentProof
+          mailOptions.attachments = [{ filename: 'payment-proof.jpg', content: base64, encoding: 'base64' }]
+        }
+
+        await transporter.sendMail(mailOptions)
 
         console.log('Email sent successfully via Nodemailer')
       } catch (emailError) {
         console.error('Error sending email via Nodemailer:', emailError)
       }
     }
-    */
 
     // Optional: Save to database
     // Add your database logic here (MongoDB, PostgreSQL, Supabase, etc.)
@@ -130,7 +152,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Lead information received successfully' 
+      message: 'Lead information received successfully',
+      orderId: orderId || undefined
     })
   } catch (error) {
     console.error('Error processing lead:', error)

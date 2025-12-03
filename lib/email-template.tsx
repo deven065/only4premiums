@@ -9,6 +9,8 @@ interface LeadEmailTemplateProps {
   validity?: string
   price: number
   timestamp: string
+  paymentMethod?: string
+  orderId?: string
 }
 
 export function LeadEmailTemplate({
@@ -22,6 +24,8 @@ export function LeadEmailTemplate({
   validity,
   price,
   timestamp
+  , paymentMethod,
+  orderId
 }: LeadEmailTemplateProps) {
   return `
     <!DOCTYPE html>
@@ -176,6 +180,18 @@ export function LeadEmailTemplate({
             <div class="info-row">
               <span class="info-label">Validity:</span>
               <span class="info-value">${validity}</span>
+            </div>
+            ` : ''}
+            ${paymentMethod ? `
+            <div class="info-row">
+              <span class="info-label">Payment Method:</span>
+              <span class="info-value">${paymentMethod}</span>
+            </div>
+            ` : ''}
+            ${orderId ? `
+            <div class="info-row">
+              <span class="info-label">Order ID:</span>
+              <span class="info-value">#${orderId}</span>
             </div>
             ` : ''}
           </div>

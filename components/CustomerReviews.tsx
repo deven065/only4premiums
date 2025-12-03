@@ -38,6 +38,9 @@ export default function CustomerReviews({
   const [visibleCount, setVisibleCount] = useState(3)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxImage, setLightboxImage] = useState('')
+  const [lightboxIndex, setLightboxIndex] = useState(0)
+  const [touchStart, setTouchStart] = useState(0)
+  const [touchEnd, setTouchEnd] = useState(0)
   const displayedReviews = reviews.slice(0, visibleCount)
   const hasMore = visibleCount < reviews.length
 
@@ -118,15 +121,16 @@ export default function CustomerReviews({
             <h3 className="text-black text-2xl font-semibold text-center mb-4">Image Review</h3>
 
             <div className="mx-auto max-w-full px-4">
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
                 {reviewImages.map((img, idx) => (
                   <div
                     key={idx}
                     onClick={() => {
                       setLightboxImage(img)
                       setLightboxOpen(true)
+                      setLightboxIndex(idx)
                     }}
-                    className="overflow-hidden border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity"
+                    className="overflow-hidden rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity"
                   >
                     <div className="relative w-full aspect-square">
                       <Image
@@ -219,13 +223,28 @@ export default function CustomerReviews({
             </div>
           )}
         </div>
-      </div>
 
-      {/* Image Lightbox Modal */}
-      {lightboxOpen && (
+        {/* Image Lightbox Modal */}
+        {lightboxOpen && (
         <div 
           className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4"
           onClick={() => setLightboxOpen(false)}
+          onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
+          onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
+          onTouchEnd={() => {
+            if (touchStart - touchEnd > 75) {
+              // Swipe left - next image
+              const nextIndex = (lightboxIndex + 1) % reviewImages.length
+              setLightboxIndex(nextIndex)
+              setLightboxImage(reviewImages[nextIndex])
+            }
+            if (touchStart - touchEnd < -75) {
+              // Swipe right - previous image
+              const prevIndex = (lightboxIndex - 1 + reviewImages.length) % reviewImages.length
+              setLightboxIndex(prevIndex)
+              setLightboxImage(reviewImages[prevIndex])
+            }
+          }}
         >
           <button
             onClick={() => setLightboxOpen(false)}
@@ -234,6 +253,23 @@ export default function CustomerReviews({
           >
             <X className="w-8 h-8" />
           </button>
+
+          {/* Previous Button */}
+          {reviewImages.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                const prevIndex = (lightboxIndex - 1 + reviewImages.length) % reviewImages.length
+                setLightboxIndex(prevIndex)
+                setLightboxImage(reviewImages[prevIndex])
+              }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-[110] bg-black/50 rounded-full p-2"
+              aria-label="Previous"
+            >
+              <ChevronDown className="w-8 h-8 rotate-90" />
+            </button>
+          )}
+
           <div 
             className="relative max-w-[90vw] max-h-[90vh] w-full h-full"
             onClick={(e) => e.stopPropagation()}
@@ -245,8 +281,32 @@ export default function CustomerReviews({
               className="object-contain"
             />
           </div>
+
+          {/* Next Button */}
+          {reviewImages.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                const nextIndex = (lightboxIndex + 1) % reviewImages.length
+                setLightboxIndex(nextIndex)
+                setLightboxImage(reviewImages[nextIndex])
+              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-[110] bg-black/50 rounded-full p-2"
+              aria-label="Next"
+            >
+              <ChevronDown className="w-8 h-8 -rotate-90" />
+            </button>
+          )}
+
+          {/* Image Counter */}
+          {reviewImages.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white bg-black/50 px-4 py-2 rounded-full text-sm z-[110]">
+              {lightboxIndex + 1} / {reviewImages.length}
+            </div>
+          )}
         </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { Lock, X } from 'lucide-react'
 import Image from 'next/image'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import PaymentFlow from '@/components/PaymentFlow'
 
 function CheckoutContent() {
   const searchParams = useSearchParams()
@@ -17,9 +18,10 @@ function CheckoutContent() {
   const price = parseFloat(searchParams.get('price') || '0')
   const productImage = searchParams.get('image') || ''
 
-  const [step, setStep] = useState<'information' | 'payment' | 'finish'>('information')
+  const [step, setStep] = useState<'information' | 'payment' | 'confirm' | 'finish'>('information')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'crypto' | null>(null)
+  const [paymentProof, setPaymentProof] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     email: '',
     fullName: '',
@@ -175,7 +177,7 @@ function CheckoutContent() {
                 <span className="font-bold text-xl text-gray-900">Only4Premiums</span>
               </div>
               
-              <div className="hidden sm:flex items-center space-x-4">
+                <div className="hidden sm:flex items-center space-x-4">
                 <div className={`flex items-center space-x-2 ${step === 'information' ? 'text-orange-600' : 'text-gray-400'}`}>
                   <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
                     step === 'information' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
@@ -189,19 +191,29 @@ function CheckoutContent() {
                   <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
                     step === 'payment' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
                   }`}>
-                    {step === 'finish' ? '✓' : '2'}
+                    2
                   </div>
                   <span className="text-sm font-medium">Payment</span>
                 </div>
 
-                <div className={`flex items-center space-x-2 ${step === 'finish' ? 'text-orange-600' : 'text-gray-400'}`}>
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
-                    step === 'finish' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
-                  }`}>
-                    3
+                  <div className={`flex items-center space-x-2 ${step === 'confirm' ? 'text-orange-600' : 'text-gray-400'}`}>
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
+                      step === 'confirm' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
+                    }`}>
+                      3
+                    </div>
+                    <span className="text-sm font-medium">Upload</span>
                   </div>
-                  <span className="text-sm font-medium">Finish</span>
-                </div>
+
+                  <div className={`flex items-center space-x-2 ${step === 'finish' ? 'text-orange-600' : 'text-gray-400'}`}>
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
+                      step === 'finish' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
+                    }`}>
+                      4
+                    </div>
+                    <span className="text-sm font-medium">Finish</span>
+                  </div>
+                
               </div>
             </div>
 
@@ -421,7 +433,7 @@ function CheckoutContent() {
                 </div>
               </div>
             </form>
-          ) : step === 'payment' ? (
+          ) : (step === 'payment' && (
             <div className="p-4 sm:p-6 lg:p-8">
               <div className="max-w-4xl mx-auto">
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 text-center">Choose Payment Method</h2>
@@ -494,142 +506,152 @@ function CheckoutContent() {
 
                 {/* Payment Details */}
                 {paymentMethod && (
-                  <div className="bg-gradient-to-r from-orange-50 to-pink-50 border-2 border-orange-200 rounded-2xl p-4 sm:p-8 mb-4 sm:mb-6 animate-fadeInUp">
-                    {paymentMethod === 'upi' ? (
-                      <div className="text-center">
-                        <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-4">Scan QR Code or Use UPI ID</h3>
-                        <div className="bg-white p-3 sm:p-6 rounded-2xl shadow-lg mb-4 sm:mb-6 max-w-sm mx-auto">
-                          <div className="w-full max-w-[220px] sm:max-w-[280px] aspect-square bg-white rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
-                            <Image
-                              src="/Sandeep-UPI-QR.jpeg"
-                              alt="UPI QR Code"
-                              width={280}
-                              height={280}
-                              className="rounded-xl object-contain w-full h-full"
-                            />
+                  <div className="mt-4 sm:mt-6">
+                    <div className="bg-gradient-to-r from-orange-50 to-pink-50 border-2 border-orange-200 rounded-2xl p-4 sm:p-6 mb-4">
+                      {paymentMethod === 'upi' ? (
+                        <div className="text-center">
+                          <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-4">Scan QR Code or Use UPI ID</h3>
+                          <div className="bg-white p-3 sm:p-6 rounded-2xl shadow-lg mb-4 sm:mb-6 max-w-sm mx-auto">
+                            <div className="w-full max-w-[220px] sm:max-w-[280px] aspect-square bg-white rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
+                              <Image src="/Sandeep-UPI-QR.jpeg" alt="UPI QR Code" width={280} height={280} className="rounded-xl object-contain w-full h-full" />
+                            </div>
+                            <p className="text-sm font-bold text-gray-900 mb-3">Amount: ₹{price}</p>
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                              <p className="text-xs text-gray-600 mb-1">Or pay directly to UPI ID:</p>
+                              <p className="font-mono text-sm font-bold text-blue-900 break-all" id="upi-id">firdos829@ptyes</p>
+                              <button onClick={() => { navigator.clipboard.writeText('firdos829@ptyes'); alert('UPI ID copied to clipboard!') }} className="mt-2 text-blue-600 hover:text-blue-700 font-medium text-xs flex items-center justify-center space-x-1 mx-auto">
+                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                <span>Copy UPI ID</span>
+                              </button>
+                            </div>
                           </div>
-                          <p className="text-sm font-bold text-gray-900 mb-3">Amount: ₹{price}</p>
-                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                            <p className="text-xs text-gray-600 mb-1">Or pay directly to UPI ID:</p>
-                            <p className="font-mono text-sm font-bold text-blue-900 break-all" id="upi-id">firdos829@ptyes</p>
-                            <button
-                              onClick={() => {
-                                navigator.clipboard.writeText('firdos829@ptyes')
-                                alert('UPI ID copied to clipboard!')
-                              }}
-                              className="mt-2 text-blue-600 hover:text-blue-700 font-medium text-xs flex items-center justify-center space-x-1 mx-auto"
-                            >
-                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                              </svg>
-                              <span>Copy UPI ID</span>
+                        </div>
+                      ) : (
+                        <div className="text-center">
+                          <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-4">Pay with USDT (BEP-20)</h3>
+                          <div className="bg-white p-3 sm:p-6 rounded-2xl shadow-lg mb-4 sm:mb-6 max-w-sm mx-auto">
+                            <div className="w-full max-w-[220px] sm:max-w-[280px] aspect-square bg-white rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                              <Image src="/Sandeep-Binance-QR.jpeg" alt="USDT BEP-20 QR Code" width={280} height={280} className="rounded-xl object-contain w-full h-full" />
+                            </div>
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+                              <p className="text-sm font-bold text-blue-900">Network: BEP-20 (Binance Smart Chain)</p>
+                              <p className="text-xs text-blue-700 mt-1">⚠️ Only send USDT on BEP-20 network</p>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-3 font-medium">Or manually copy address:</p>
+                            <div className="bg-gray-50 p-3 sm:p-4 rounded-lg mb-2 border-2 border-gray-200">
+                              <p className="font-mono text-xs text-gray-900 break-all" id="crypto-address">{process.env.NEXT_PUBLIC_CRYPTO_ADDRESS || '0xA1426458889A2d7aCf9B7656EeE4c13C37AaED36'}</p>
+                            </div>
+                            <button onClick={() => { const address = document.getElementById('crypto-address')?.innerText || ''; navigator.clipboard.writeText(address); alert('Address copied to clipboard!') }} className="text-orange-600 hover:text-orange-700 font-medium text-sm flex items-center justify-center space-x-2 mx-auto">
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                              <span>Copy Address</span>
                             </button>
                           </div>
                         </div>
-                        <div className="space-y-2 sm:space-y-3 text-left max-w-md mx-auto">
-                          <div className="flex items-start space-x-2 sm:space-x-3">
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">1</div>
-                            <p className="text-xs sm:text-sm text-gray-700">Open your UPI app (Google Pay, PhonePe, Paytm, etc.)</p>
+                      )}
+                    </div>
+                    {/* Upload Screenshot Step */}
+                    <div className="max-w-xl mx-auto">
+                      <div className="rounded-2xl border-2 border-gray-200 bg-white shadow-sm p-5 sm:p-6">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-9 h-9 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M4 4a2 2 0 00-2 2v10a3 3 0 003 3h14a2 2 0 002-2V7a3 3 0 00-3-3H4zm3 6a3 3 0 116 0 3 3 0 01-6 0z" />
+                            </svg>
                           </div>
-                          <div className="flex items-start space-x-2 sm:space-x-3">
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">2</div>
-                            <p className="text-xs sm:text-sm text-gray-700">Scan the QR code OR enter UPI ID: <strong>firdos829@ptyes</strong></p>
-                          </div>
-                          <div className="flex items-start space-x-2 sm:space-x-3">
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">3</div>
-                            <p className="text-xs sm:text-sm text-gray-700">Pay ₹{price} and complete the transaction</p>
-                          </div>
-                          <div className="flex items-start space-x-2 sm:space-x-3">
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">4</div>
-                            <p className="text-xs sm:text-sm text-gray-700">Click &quot;Payment Complete&quot; button below</p>
+                          <div>
+                            <h3 className="text-lg font-bold text-gray-900">Upload Payment Screenshot</h3>
+                            <p className="text-xs text-gray-600">Ensure payment is deducted before confirming.</p>
                           </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="text-center">
-                        <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-4">Pay with USDT (BEP-20)</h3>
-                        <div className="bg-white p-3 sm:p-6 rounded-2xl shadow-lg mb-4 sm:mb-6 max-w-sm mx-auto">
-                          <div className="w-full max-w-[220px] sm:max-w-[280px] aspect-square bg-white rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                            <Image
-                              src="/Sandeep-Binance-QR.jpeg"
-                              alt="USDT BEP-20 QR Code"
-                              width={280}
-                              height={280}
-                              className="rounded-xl object-contain w-full h-full"
-                            />
+
+                        <label className="block">
+                          <div className="mt-2 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors p-4 sm:p-5 text-center cursor-pointer">
+                            <div className="text-gray-700 text-sm mb-2">Drag & drop or click to upload</div>
+                            <div className="text-xs text-gray-500">Accepted: JPG, PNG (max ~5MB)</div>
                           </div>
-                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
-                            <p className="text-sm font-bold text-blue-900">Network: BEP-20 (Binance Smart Chain)</p>
-                            <p className="text-xs text-blue-700 mt-1">⚠️ Only send USDT on BEP-20 network</p>
-                          </div>
-                          <p className="text-sm text-gray-600 mb-3 font-medium">Or manually copy address:</p>
-                          <div className="bg-gray-50 p-3 sm:p-4 rounded-lg mb-4 border-2 border-gray-200">
-                            <p className="font-mono text-xs text-gray-900 break-all" id="crypto-address">
-                              {process.env.NEXT_PUBLIC_CRYPTO_ADDRESS || '0xA1426458889A2d7aCf9B7656EeE4c13C37AaED36'}
-                            </p>
-                          </div>
-                          <button
-                            onClick={() => {
-                              const address = document.getElementById('crypto-address')?.innerText || ''
-                              navigator.clipboard.writeText(address)
-                              alert('Address copied to clipboard!')
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0]
+                              if (!file) { setPaymentProof(null); return }
+                              const reader = new FileReader()
+                              reader.onloadend = () => setPaymentProof(reader.result as string)
+                              reader.readAsDataURL(file)
                             }}
-                            className="text-orange-600 hover:text-orange-700 font-medium text-sm flex items-center justify-center space-x-2 mx-auto"
+                            className="sr-only"
+                          />
+                        </label>
+
+                        {paymentProof && (
+                          <div className="mt-4 grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-4 items-start">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={paymentProof} alt="Payment proof" className="w-full sm:w-[120px] h-[120px] rounded-xl border border-gray-200 object-cover" />
+                            <div className="text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-xl p-3">
+                              <p className="font-semibold text-gray-900 mb-1">Screenshot attached</p>
+                              <p>We will verify your transaction after submission.</p>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-5">
+                          <button onClick={() => setStep('information')} className="sm:flex-1 border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-50 transition-all text-sm">Back</button>
+                          <button
+                            onClick={async () => {
+                              if (!paymentProof) { alert('Please upload the payment screenshot'); return }
+                              try {
+                                await fetch('/api/submit-lead', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                    email: formData.email,
+                                    fullName: formData.fullName,
+                                    country: formData.country,
+                                    state: formData.state,
+                                    whatsappNumber: formData.whatsappNumber,
+                                    productName,
+                                    plan,
+                                    validity,
+                                    price,
+                                    timestamp: new Date().toISOString(),
+                                    paymentProof,
+                                    paymentMethod: paymentMethod === 'upi' ? 'UPI Payment' : 'Crypto Payment',
+                                    orderId: `${Date.now()}`
+                                  })
+                                })
+                              } catch (e) {
+                                console.error('Failed to send lead with proof', e)
+                              }
+                              setStep('finish')
+                              // Auto-scroll to WhatsApp button on mobile after transition
+                              setTimeout(() => {
+                                const whatsappBtn = document.querySelector('.whatsapp-final-button')
+                                if (whatsappBtn) {
+                                  whatsappBtn.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                                }
+                              }, 300)
+                            }}
+                            className="sm:flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold transition-all text-sm"
                           >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                            <span>Copy Address</span>
+                            Confirm
                           </button>
                         </div>
-                        <div className="space-y-2 sm:space-y-3 text-left max-w-md mx-auto">
-                          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2 sm:p-3 mb-2 sm:mb-4">
-                            <p className="text-xs sm:text-sm text-yellow-800">
-                              <strong>Amount:</strong> ₹{price} (Convert to USDT equivalent)
-                            </p>
-                            <p className="text-xs text-yellow-700 mt-1">Example: ₹999 ≈ 11.75 USDT</p>
-                          </div>
-                          <div className="flex items-start space-x-2 sm:space-x-3">
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">1</div>
-                            <p className="text-xs sm:text-sm text-gray-700">Open Binance app and scan the QR code OR copy the address</p>
-                          </div>
-                          <div className="flex items-start space-x-2 sm:space-x-3">
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">2</div>
-                            <p className="text-xs sm:text-sm text-gray-700"><strong>Select USDT and BEP-20 network</strong> (Binance Smart Chain)</p>
-                          </div>
-                          <div className="flex items-start space-x-2 sm:space-x-3">
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">3</div>
-                            <p className="text-xs sm:text-sm text-gray-700">Send the USDT amount and complete the transaction</p>
-                          </div>
-                          <div className="flex items-start space-x-2 sm:space-x-3">
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-orange-500 text-white rounded-full flex items-center justify-center shrink-0 font-bold text-xs sm:text-sm">4</div>
-                            <p className="text-xs sm:text-sm text-gray-700">Click &quot;Payment Complete&quot; button below</p>
-                          </div>
-                        </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 )}
-
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-                  <button
-                    onClick={() => setStep('information')}
-                    className="flex-1 border-2 border-gray-300 text-gray-700 py-3 sm:py-4 rounded-lg font-bold hover:bg-gray-50 transition-all text-sm sm:text-base"
-                  >
-                    ← Back
-                  </button>
-                  <button
-                    onClick={() => paymentMethod && setStep('finish')}
-                    disabled={!paymentMethod}
-                    className="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white py-3 sm:py-4 rounded-lg font-bold hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm sm:text-base"
-                  >
-                    Payment Complete →
-                  </button>
-                </div>
+                
+                {/* Back Button */}
+                {!paymentMethod && (
+                  <div className="flex">
+                    <button onClick={() => setStep('information')} className="flex-1 border-2 border-gray-300 text-gray-700 py-3 sm:py-4 rounded-lg font-bold hover:bg-gray-50 transition-all text-sm sm:text-base">← Back</button>
+                  </div>
+                )}
               </div>
             </div>
-          ) : (
+          ))}
+
+          {step === 'finish' && (
             <div className="p-6 lg:p-12 text-center">
               <div className="max-w-md mx-auto">
                 <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -653,8 +675,30 @@ function CheckoutContent() {
                 </div>
 
                 <button
-                  onClick={handleFinish}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-lg font-bold text-lg transition-all flex items-center justify-center space-x-2 mb-4"
+                  onClick={() => {
+                    if (!paymentProof) { alert('Upload screenshot before continuing'); return }
+                    const paymentMethodText = paymentMethod === 'upi' ? 'UPI Payment' : 'Crypto Payment'
+                    const message = `🛒 *New Order from Only4Premiums*\n\n` +
+                      `👤 *Customer Details:*\n` +
+                      `Name: ${formData.fullName}\n` +
+                      `Email: ${formData.email}\n` +
+                      `Country: ${formData.country}\n` +
+                      `State: ${formData.state}\n` +
+                      `WhatsApp: ${formData.whatsappNumber}\n\n` +
+                      `📦 *Product Details:*\n` +
+                      `Product: ${productName}\n` +
+                      (plan ? `Plan: ${plan}\n` : '') +
+                      (validity ? `Validity: ${validity}\n` : '') +
+                      `💰 Price: ₹${price}\n` +
+                      `💳 Payment Method: ${paymentMethodText}\n\n` +
+                      `I have completed the payment and uploaded the screenshot.`
+
+                    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919876543210'
+                    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+                    window.open(whatsappUrl, '_blank')
+                    window.close()
+                  }}
+                  className="whatsapp-final-button w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-lg font-bold text-lg transition-all flex items-center justify-center space-x-2 mb-4"
                 >
                   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="white">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
@@ -662,12 +706,7 @@ function CheckoutContent() {
                   <span>Continue to WhatsApp</span>
                 </button>
 
-                <button
-                  onClick={() => window.close()}
-                  className="text-gray-600 hover:text-gray-900 font-medium"
-                >
-                  Close
-                </button>
+                <button onClick={() => setStep('payment')} className="text-gray-600 hover:text-gray-900 font-medium">Back</button>
               </div>
             </div>
           )}
