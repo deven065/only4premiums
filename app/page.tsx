@@ -263,32 +263,32 @@ export default function Home() {
       <div className="fixed top-[60px] sm:top-[68px] left-0 right-0 bg-gray-900 border-y border-gray-700 h-[26px] sm:h-[30px] py-0 scanline-wrapper marquee-container z-40">
         <div className="scanline" />
         <div className="container mx-auto px-4 h-full">
-          <div className="flex items-center justify-center h-full gap-1.5 sm:gap-2.5 text-[9px] sm:text-[11px] overflow-hidden whitespace-nowrap leading-none">
-            <div className="flex items-center gap-0.5 sm:gap-1 text-white whitespace-nowrap">
-              <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
-                <svg className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+          <div className="flex items-center justify-center h-full gap-3 sm:gap-4 text-xs sm:text-sm overflow-hidden whitespace-nowrap leading-none">
+            <div className="flex items-center gap-1.5 sm:gap-1.5 text-white whitespace-nowrap">
+              <div className="w-5 h-5 sm:w-5 sm:h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-2.5 h-2.5 sm:w-2.5 sm:h-2.5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
                 </svg>
               </div>
-              <span className="font-medium leading-none">Secure</span>
+              <span className="font-bold leading-none">100% Secure</span>
             </div>
-            <div className="w-px h-2.5 sm:h-3 bg-gray-700"></div>
-            <div className="flex items-center gap-0.5 sm:gap-1 text-white whitespace-nowrap">
-              <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
-                <svg className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+            <div className="w-px h-4 sm:h-4 bg-gray-700"></div>
+            <div className="flex items-center gap-1.5 sm:gap-1.5 text-white whitespace-nowrap">
+              <div className="w-5 h-5 sm:w-5 sm:h-5 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-2.5 h-2.5 sm:w-2.5 sm:h-2.5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
                 </svg>
               </div>
-              <span className="font-medium leading-none">Instant</span>
+              <span className="font-bold leading-none">Instant Delivery</span>
             </div>
-            <div className="w-px h-2.5 sm:h-3 bg-gray-700"></div>
-            <div className="flex items-center gap-0.5 sm:gap-1 text-white whitespace-nowrap">
-              <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
-                <svg className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+            <div className="w-px h-4 sm:h-4 bg-gray-700"></div>
+            <div className="flex items-center gap-1.5 sm:gap-1.5 text-white whitespace-nowrap">
+              <div className="w-5 h-5 sm:w-5 sm:h-5 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-2.5 h-2.5 sm:w-2.5 sm:h-2.5 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
                 </svg>
               </div>
-              <span className="font-medium leading-none">Support</span>
+              <span className="font-bold leading-none">24/7 Support</span>
             </div>
           </div>
         </div>
