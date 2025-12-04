@@ -161,51 +161,39 @@ function CheckoutContent() {
       <main className="pt-24 sm:pt-28 pb-12 sm:pb-16">
         <div className="container mx-auto px-4 max-w-7xl">
           {/* Header */}
-          <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between mb-8">
-            <div className="flex items-center space-x-8">
-              <div className="flex items-center space-x-3">
-                <div className="relative w-10 h-10">
-                  <Image 
-                    src="/only4premiums.png" 
-                    alt="Only4Premiums Logo" 
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <span className="font-bold text-xl text-gray-900">Only4Premiums</span>
-              </div>
-              
-              <div className="hidden sm:flex items-center space-x-4">
-                <div className={`flex items-center space-x-2 ${step === 'information' ? 'text-orange-600' : 'text-gray-400'}`}>
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
+          <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between mb-8">
+            <div className="flex items-center space-x-3 sm:space-x-8">
+              <div className="flex items-center space-x-2 sm:space-x-4">
+                <div className={`flex items-center space-x-1 sm:space-x-2 ${step === 'information' ? 'text-orange-600' : 'text-gray-400'}`}>
+                  <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
                     step === 'information' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
                   }`}>
                     {step !== 'information' ? '✓' : '1'}
                   </div>
-                  <span className="text-sm font-medium">Information</span>
+                  <span className="text-xs sm:text-sm font-medium hidden xs:inline">Information</span>
                 </div>
                 
-                <div className={`flex items-center space-x-2 ${step === 'payment' ? 'text-orange-600' : 'text-gray-400'}`}>
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
+                <div className={`flex items-center space-x-1 sm:space-x-2 ${step === 'payment' ? 'text-orange-600' : 'text-gray-400'}`}>
+                  <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
                     step === 'payment' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
                   }`}>
                     {step === 'finish' ? '✓' : '2'}
                   </div>
-                  <span className="text-sm font-medium">Payment</span>
+                  <span className="text-xs sm:text-sm font-medium hidden xs:inline">Payment</span>
                 </div>
 
-                <div className={`flex items-center space-x-2 ${step === 'finish' ? 'text-orange-600' : 'text-gray-400'}`}>
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
+                <div className={`flex items-center space-x-1 sm:space-x-2 ${step === 'finish' ? 'text-orange-600' : 'text-gray-400'}`}>
+                  <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
                     step === 'finish' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
                   }`}>
                     3
                   </div>
-                  <span className="text-sm font-medium">Finish</span>
+                  <span className="text-xs sm:text-sm font-medium hidden xs:inline">Finish</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <div className="hidden sm:flex items-center space-x-2 text-blue-600">
                 <Lock className="w-4 h-4" />
                 <span className="text-sm font-medium">Secured And Encrypted</span>
@@ -214,7 +202,7 @@ function CheckoutContent() {
                 onClick={() => window.close()}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
           </div>
