@@ -33,6 +33,8 @@ export async function POST(request: Request) {
       orderId
     } = data
 
+    const resolvedOrderId = orderId || `ORD-${Date.now()}`
+
     // Log the lead information
     console.log('New Lead Received:', {
       email,
@@ -47,7 +49,7 @@ export async function POST(request: Request) {
       timestamp,
       hasPaymentProof: Boolean(paymentProof),
       paymentMethod,
-      orderId
+      orderId: resolvedOrderId
     })
 
     // Send email notification to website owner
@@ -70,7 +72,7 @@ export async function POST(request: Request) {
           price,
           timestamp,
           paymentMethod,
-          orderId
+          orderId: resolvedOrderId
         })
 
         const attachments: Array<{ filename: string; content: string }> = []
@@ -120,7 +122,7 @@ export async function POST(request: Request) {
           price,
           timestamp,
           paymentMethod,
-          orderId
+          orderId: resolvedOrderId
         })
 
         const mailOptions: MailOptions = {
@@ -163,7 +165,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ 
       success: true, 
       message: 'Lead information received successfully',
-      orderId: orderId || undefined
+      orderId: resolvedOrderId
     })
   } catch (error) {
     console.error('Error processing lead:', error)

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import PaymentFlow from './PaymentFlow'
 
 interface ProductPlan {
   name: string
@@ -16,21 +15,24 @@ interface ProductPlanSelectorProps {
   productImage?: string
 }
 
-export default function ProductPlanSelector({ plans, productName }: ProductPlanSelectorProps) {
+export default function ProductPlanSelector({ plans, productName, productImage }: ProductPlanSelectorProps) {
   // Check if this is LuxAlgo or FxReplay product
   const isLuxAlgo = productName.toLowerCase().includes('luxalgo')
   const isFxReplay = productName.toLowerCase().includes('fxreplay')
   const [selectedPlan, setSelectedPlan] = useState(isLuxAlgo ? 'Premium' : plans[0]?.name || '')
   const [selectedValidity, setSelectedValidity] = useState('')
-  const [showPayment, setShowPayment] = useState(false)
 
   const handleBuyNow = useCallback(() => {
     if (!selectedPlan || !selectedValidity) {
       alert('Please select a plan and validity')
       return
     }
-    setShowPayment(true)
-  }, [selectedPlan, selectedValidity])
+    const savings = calculateSavings()
+    const totalPrice = savings?.totalPrice ?? plans.find(p => p.name === selectedPlan)?.price ?? 0
+    const validityParam = savings?.validityLabel || selectedValidity
+    const checkoutUrl = `/checkout?product=${encodeURIComponent(productName)}&plan=${encodeURIComponent(selectedPlan)}&validity=${encodeURIComponent(validityParam)}&price=${totalPrice}&image=${encodeURIComponent(productImage || '')}`
+    window.open(checkoutUrl, '_blank', 'noopener,noreferrer')
+  }, [selectedPlan, selectedValidity, productName, productImage, plans])
 
   // Notify page when selection is ready
   useEffect(() => {
@@ -239,21 +241,12 @@ export default function ProductPlanSelector({ plans, productName }: ProductPlanS
         </div>
       )}
 
-      {!showPayment ? (
-        <button 
-          onClick={handleBuyNow}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-bold text-lg transition-all"
-        >
-          Buy Now
-        </button>
-      ) : (
-        <PaymentFlow
-          productName={productName}
-          selectedPlan={selectedPlan}
-          selectedValidity={savingsData?.validityLabel || selectedValidity}
-          totalPrice={savingsData?.totalPrice || 0}
-        />
-      )}
+      <button 
+        onClick={handleBuyNow}
+        className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-bold text-lg transition-all"
+      >
+        Buy Now
+      </button>
 
     </div>
   )
