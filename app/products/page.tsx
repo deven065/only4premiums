@@ -154,7 +154,7 @@ export default function ProductsPage() {
   ]
 
   const [reviews, setReviews] = useState<Review[]>(initialReviews)
-  const [reviewImages] = useState<string[]>([
+  const [reviewImages, setReviewImages] = useState<string[]>([
     '/review (1).jpeg',
     '/review (2).jpeg',
     '/review (3).jpeg',
@@ -174,8 +174,44 @@ export default function ProductsPage() {
 
   const allImages = [featuredProduct.image, ...featuredProduct.screenshots]
 
+  // Load reviews and images from localStorage on mount
+  useEffect(() => {
+    const savedReviews = localStorage.getItem('tradinghub-reviews')
+    const savedImages = localStorage.getItem('tradinghub-review-images')
+    
+    if (savedReviews) {
+      try {
+        const parsed = JSON.parse(savedReviews)
+        setReviews(parsed)
+      } catch (e) {
+        console.error('Failed to parse saved reviews', e)
+      }
+    }
+    
+    if (savedImages) {
+      try {
+        const parsed = JSON.parse(savedImages)
+        setReviewImages(parsed)
+      } catch (e) {
+        console.error('Failed to parse saved images', e)
+      }
+    }
+  }, [])
+
   const handleNewReview = (newReview: Review) => {
-    setReviews(prev => [newReview, ...prev])
+    setReviews(prev => {
+      const updated = [newReview, ...prev]
+      localStorage.setItem('tradinghub-reviews', JSON.stringify(updated))
+      return updated
+    })
+  }
+
+  const handleAddPhoto = (photoUrl: string) => {
+    setReviewImages(prev => {
+      const updated = [...prev, photoUrl]
+      localStorage.setItem('tradinghub-review-images', JSON.stringify(updated))
+      return updated
+    })
   }
 
   const nextImage = () => {
@@ -358,7 +394,7 @@ export default function ProductsPage() {
           {/* Leave a Review Section */}
           <div className="-mx-4 sm:mx-0 mb-16 bg-white py-8 px-4 sm:px-8">
             <div className="container mx-auto">
-              <LeaveReview onSubmit={handleNewReview} onAddPhoto={() => {}} />
+              <LeaveReview onSubmit={handleNewReview} onAddPhoto={handleAddPhoto} />
             </div>
           </div>
 

@@ -197,12 +197,44 @@ export default function Home() {
 
   const allImages = [product.image, ...product.screenshots]
 
+  // Load reviews and images from localStorage on mount
+  useEffect(() => {
+    const savedReviews = localStorage.getItem('tradingview-reviews')
+    const savedImages = localStorage.getItem('tradingview-review-images')
+    
+    if (savedReviews) {
+      try {
+        const parsed = JSON.parse(savedReviews)
+        setReviews(parsed)
+      } catch (e) {
+        console.error('Failed to parse saved reviews', e)
+      }
+    }
+    
+    if (savedImages) {
+      try {
+        const parsed = JSON.parse(savedImages)
+        setReviewImages(parsed)
+      } catch (e) {
+        console.error('Failed to parse saved images', e)
+      }
+    }
+  }, [])
+
   const handleNewReview = (newReview: Review) => {
-    setReviews(prev => [newReview, ...prev])
+    setReviews(prev => {
+      const updated = [newReview, ...prev]
+      localStorage.setItem('tradingview-reviews', JSON.stringify(updated))
+      return updated
+    })
   }
 
   const handleAddPhoto = (photoUrl: string) => {
-    setReviewImages(prev => [...prev, photoUrl])
+    setReviewImages(prev => {
+      const updated = [...prev, photoUrl]
+      localStorage.setItem('tradingview-review-images', JSON.stringify(updated))
+      return updated
+    })
   }
 
   const nextImage = () => {
