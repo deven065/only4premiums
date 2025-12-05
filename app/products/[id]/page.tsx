@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, ShoppingCart, Star } from 'lucide-react'
+import { ShoppingCart, Star } from 'lucide-react'
 import { FaCartShopping } from 'react-icons/fa6'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -339,73 +339,16 @@ export default function ProductPage() {
     ]
   }
 
-  const [productReviews, setProductReviews] = useState<Record<string, Review[]>>(initialReviews)
-  const [reviewImages, setReviewImages] = useState<string[]>([
-    '/review (1).jpeg',
-    '/review (2).jpeg',
-    '/review (3).jpeg',
-    '/review (4).jpeg',
-    '/review (5).jpeg',
-    '/review (6).jpeg',
-    '/review (7).jpeg',
-    '/review (8).jpeg',
-    '/review (9).jpeg',
-    '/review (10).jpeg',
-    '/review (11).jpeg'
-  ])
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [touchStart, setTouchStart] = useState(0)
-  const [touchEnd, setTouchEnd] = useState(0)
+  // Local review data for display; extend with product-specific reviews as needed
+  const productReviews: Record<string, Review[]> = initialReviews
+  const reviewImages: string[] = []
+  const handleNewReview = () => {}
+  const handleAddPhoto = () => {}
+
   const [canShowStickyBuy, setCanShowStickyBuy] = useState(false)
 
   const product = products[productId]
   const allImages = product ? [...new Set([product.image, ...(product.screenshots || [])])].filter(img => img && img.trim() !== '') : []
-
-  const handleNewReview = (newReview: Review) => {
-    setProductReviews(prev => ({
-      ...prev,
-      [productId]: [newReview, ...(prev[productId] || [])]
-    }))
-  }
-
-  const handleAddPhoto = (photoUrl: string) => {
-    setReviewImages(prev => [...prev, photoUrl])
-  }
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % allImages.length)
-  }
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length)
-  }
-
-  // Handle touch events for swipe
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX)
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX)
-  }
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return
-    
-    const distance = touchStart - touchEnd
-    const isLeftSwipe = distance > 50
-    const isRightSwipe = distance < -50
-
-    if (isLeftSwipe) {
-      nextImage()
-    }
-    if (isRightSwipe) {
-      prevImage()
-    }
-
-    setTouchStart(0)
-    setTouchEnd(0)
-  }
 
   // Listen for plan+validity readiness to show sticky Buy Now
   useEffect(() => {

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { FaCartShopping } from 'react-icons/fa6'
-import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, ShoppingCart, Star } from 'lucide-react'
+import Image from 'next/image'
+import { ShoppingCart, Star } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductRating from '@/components/ProductRating'
@@ -153,50 +153,50 @@ export default function ProductsPage() {
     }
   ]
 
-  const [reviews, setReviews] = useState<Review[]>(initialReviews)
-  const [reviewImages, setReviewImages] = useState<string[]>([
-    '/review (1).jpeg',
-    '/review (2).jpeg',
-    '/review (3).jpeg',
-    '/review (4).jpeg',
-    '/review (5).jpeg',
-    '/review (6).jpeg',
-    '/review (7).jpeg',
-    '/review (8).jpeg',
-    '/review (9).jpeg',
-    '/review (10).jpeg',
-    '/review (11).jpeg'
-  ])
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [touchStart, setTouchStart] = useState(0)
-  const [touchEnd, setTouchEnd] = useState(0)
+  const [reviews, setReviews] = useState<Review[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('tradinghub-reviews')
+      if (saved) {
+        try {
+          return JSON.parse(saved)
+        } catch (e) {
+          console.error('Failed to parse saved reviews', e)
+        }
+      }
+    }
+    return initialReviews
+  })
+
+  const [reviewImages, setReviewImages] = useState<string[]>(() => {
+    const defaults = [
+      '/review (1).jpeg',
+      '/review (2).jpeg',
+      '/review (3).jpeg',
+      '/review (4).jpeg',
+      '/review (5).jpeg',
+      '/review (6).jpeg',
+      '/review (7).jpeg',
+      '/review (8).jpeg',
+      '/review (9).jpeg',
+      '/review (10).jpeg',
+      '/review (11).jpeg'
+    ]
+
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('tradinghub-review-images')
+      if (saved) {
+        try {
+          return JSON.parse(saved)
+        } catch (e) {
+          console.error('Failed to parse saved images', e)
+        }
+      }
+    }
+    return defaults
+  })
   const [canShowStickyBuy, setCanShowStickyBuy] = useState(false)
 
   const allImages = [featuredProduct.image, ...featuredProduct.screenshots]
-
-  // Load reviews and images from localStorage on mount
-  useEffect(() => {
-    const savedReviews = localStorage.getItem('tradinghub-reviews')
-    const savedImages = localStorage.getItem('tradinghub-review-images')
-    
-    if (savedReviews) {
-      try {
-        const parsed = JSON.parse(savedReviews)
-        setReviews(parsed)
-      } catch (e) {
-        console.error('Failed to parse saved reviews', e)
-      }
-    }
-    
-    if (savedImages) {
-      try {
-        const parsed = JSON.parse(savedImages)
-        setReviewImages(parsed)
-      } catch (e) {
-        console.error('Failed to parse saved images', e)
-      }
-    }
-  }, [])
 
   const handleNewReview = (newReview: Review) => {
     setReviews(prev => {
@@ -212,40 +212,6 @@ export default function ProductsPage() {
       localStorage.setItem('tradinghub-review-images', JSON.stringify(updated))
       return updated
     })
-  }
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % allImages.length)
-  }
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length)
-  }
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX)
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX)
-  }
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return
-    
-    const distance = touchStart - touchEnd
-    const isLeftSwipe = distance > 50
-    const isRightSwipe = distance < -50
-
-    if (isLeftSwipe) {
-      nextImage()
-    }
-    if (isRightSwipe) {
-      prevImage()
-    }
-
-    setTouchStart(0)
-    setTouchEnd(0)
   }
 
   // Listen for plan+validity readiness to show sticky Buy Now

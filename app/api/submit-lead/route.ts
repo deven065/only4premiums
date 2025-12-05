@@ -1,6 +1,18 @@
 import { NextResponse } from 'next/server'
 import { LeadEmailTemplate } from '@/lib/email-template'
 
+interface MailOptions {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+  attachments?: Array<{
+    filename: string;
+    content: string;
+    encoding: string;
+  }>;
+}
+
 export async function POST(request: Request) {
   try {
     const data = await request.json()
@@ -111,16 +123,14 @@ export async function POST(request: Request) {
           orderId
         })
 
-        const mailOptions: any = {
+        const mailOptions: MailOptions = {
           from: process.env.EMAIL_USER,
-          to: process.env.OWNER_EMAIL,
+          to: process.env.OWNER_EMAIL || 'owner@only4premiums.com',
           subject: `🎯 New Lead: ${fullName} - ${productName}`,
-          html: emailHtml
-        }
-
-        if (paymentProof && typeof paymentProof === 'string') {
-          const base64 = paymentProof.split(',')[1] || paymentProof
-          mailOptions.attachments = [{ filename: 'payment-proof.jpg', content: base64, encoding: 'base64' }]
+          html: emailHtml,
+          attachments: paymentProof && typeof paymentProof === 'string'
+            ? [{ filename: 'payment-proof.jpg', content: paymentProof.split(',')[1] || paymentProof, encoding: 'base64' }]
+            : undefined
         }
 
         await transporter.sendMail(mailOptions)

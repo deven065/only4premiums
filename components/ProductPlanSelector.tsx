@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import PaymentFlow from './PaymentFlow'
 
 interface ProductPlan {
@@ -16,17 +16,21 @@ interface ProductPlanSelectorProps {
   productImage?: string
 }
 
-export default function ProductPlanSelector({ plans, productName, productImage }: ProductPlanSelectorProps) {
+export default function ProductPlanSelector({ plans, productName }: ProductPlanSelectorProps) {
   // Check if this is LuxAlgo or FxReplay product
   const isLuxAlgo = productName.toLowerCase().includes('luxalgo')
   const isFxReplay = productName.toLowerCase().includes('fxreplay')
-  
-  const [selectedPlan, setSelectedPlan] = useState(isLuxAlgo ? 'Premium' : (plans[0]?.name || ''))
+  const [selectedPlan, setSelectedPlan] = useState(isLuxAlgo ? 'Premium' : plans[0]?.name || '')
   const [selectedValidity, setSelectedValidity] = useState('')
   const [showPayment, setShowPayment] = useState(false)
-  const [selectedPayment, setSelectedPayment] = useState('')
-  const [paymentProof, setPaymentProof] = useState<string | null>(null)
-  const whatsappButtonRef = useRef<HTMLButtonElement>(null)
+
+  const handleBuyNow = useCallback(() => {
+    if (!selectedPlan || !selectedValidity) {
+      alert('Please select a plan and validity')
+      return
+    }
+    setShowPayment(true)
+  }, [selectedPlan, selectedValidity])
 
   // Notify page when selection is ready
   useEffect(() => {
@@ -35,6 +39,19 @@ export default function ProductPlanSelector({ plans, productName, productImage }
       window.dispatchEvent(new CustomEvent('buy-ready', { detail: ready }))
     }
   }, [selectedPlan, selectedValidity])
+
+  // Listen for an external buy trigger (used by sticky CTA buttons)
+  useEffect(() => {
+    const onTrigger = () => handleBuyNow()
+    if (typeof window !== 'undefined') {
+      window.addEventListener('trigger-buy-now', onTrigger as EventListener)
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('trigger-buy-now', onTrigger as EventListener)
+      }
+    }
+  }, [handleBuyNow])
 
   // Calculate savings based on selected plan and validity
   const calculateSavings = () => {
@@ -104,91 +121,6 @@ export default function ProductPlanSelector({ plans, productName, productImage }
   }
 
   const savingsData = calculateSavings()
-
-  // Auto-scroll to WhatsApp button when payment section is shown or payment selected
-  useEffect(() => {
-    if (showPayment && whatsappButtonRef.current) {
-      whatsappButtonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
-  }, [showPayment])
-
-  useEffect(() => {
-    if (selectedPayment && whatsappButtonRef.current) {
-      whatsappButtonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
-  }, [selectedPayment])
-
-  const handleProofUpload: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const file = e.target.files?.[0]
-    if (!file) {
-      setPaymentProof(null)
-      return
-    }
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      const imageUrl = reader.result as string
-      setPaymentProof(imageUrl)
-      // After proof upload, ensure WhatsApp button comes into view
-      if (whatsappButtonRef.current) {
-        whatsappButtonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const handleBuyNow = useCallback(() => {
-    if (selectedPlan && selectedValidity && savingsData) {
-      const checkoutUrl = `/checkout?product=${encodeURIComponent(productName)}&plan=${encodeURIComponent(selectedPlan)}&validity=${encodeURIComponent(savingsData.validityLabel)}&price=${savingsData.totalPrice}&image=${encodeURIComponent(productImage || '')}`
-      // Open checkout page
-      const win = window.open(checkoutUrl, '_blank')
-      // Attempt to focus new window; if same tab, scroll to payment area
-      setTimeout(() => {
-        if (whatsappButtonRef.current) {
-          whatsappButtonRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        } else {
-          window.scrollBy({ top: 400, behavior: 'smooth' })
-        }
-      }, 200)
-      if (win) {
-        win.focus()
-      }
-    } else {
-      alert('Please select both plan and validity')
-    }
-  }, [selectedPlan, selectedValidity, savingsData, productName, productImage])
-
-  // Listen for global trigger from floating button
-  useEffect(() => {
-    const onTrigger = () => {
-      handleBuyNow()
-    }
-    if (typeof window !== 'undefined') {
-      window.addEventListener('trigger-buy-now', onTrigger as EventListener)
-    }
-    return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('trigger-buy-now', onTrigger as EventListener)
-      }
-    }
-  }, [selectedPlan, selectedValidity, handleBuyNow])
-
-  const handlePayment = () => {
-    // Require a payment method
-    if (!selectedPayment) {
-      alert('Please select a payment method')
-      return
-    }
-    // Require payment proof before redirecting to WhatsApp
-    if (!paymentProof) {
-      alert('Please upload the payment screenshot to continue')
-      return
-    }
-    
-    // Redirect to WhatsApp with order details
-    const message = `Hi! I want to buy:\nPlan: ${selectedPlan}\nValidity: ${selectedValidity}\nPayment Method: ${selectedPayment}\nPayment Proof: attached screenshot`
-    const whatsappUrl = `https://wa.me/your_number?text=${encodeURIComponent(message)}`
-    window.open(whatsappUrl, '_blank')
-  }
 
   return (
     <div className="mb-8 product-plan-selector">
