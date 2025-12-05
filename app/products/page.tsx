@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, ShoppingCart, Star } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductRating from '@/components/ProductRating'
+import SwipeableCarousel from '@/components/SwipeableCarousel'
 import ProductPlanSelector from '@/components/ProductPlanSelector'
 import ProductTrustBadges from '@/components/ProductTrustBadges'
 import HowToBuy from '@/components/HowToBuy'
@@ -284,43 +285,13 @@ export default function ProductsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-16">
             {/* Product Image Gallery */}
             <div className="relative lg:sticky lg:top-20 h-fit w-screen lg:w-full -mx-4 lg:mx-0">
-              <div 
-                className="relative h-[60vh] sm:h-[65vh] md:h-[70vh] lg:h-[75vh] bg-white overflow-hidden border border-gray-300"
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
-                <Image 
-                  src={allImages[currentImageIndex]} 
-                  alt={`${featuredProduct.name} - Image ${currentImageIndex + 1}`}
-                  fill
-                  className="object-contain transition-all duration-500"
-                  priority
+              <div className="h-[60vh] sm:h-[65vh] md:h-[70vh] lg:h-[75vh]">
+                <SwipeableCarousel 
+                  images={allImages}
+                  showControls={true}
+                  showIndicators={true}
+                  className="border border-gray-300"
                 />
-
-                <div className="absolute top-4 right-4 bg-black/80 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm z-40">
-                  {currentImageIndex + 1} / {allImages.length}
-                </div>
-
-                {allImages.length > 1 && (
-                  <div className="absolute inset-0 z-50 pointer-events-none flex items-center justify-between px-3">
-                    <button
-                      onClick={prevImage}
-                      aria-label="Previous"
-                      className="pointer-events-auto w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-700 hover:scale-105 transition-transform"
-                    >
-                      <ChevronLeft className="w-5 h-5" strokeWidth={2} />
-                    </button>
-
-                    <button
-                      onClick={nextImage}
-                      aria-label="Next"
-                      className="pointer-events-auto w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-700 hover:scale-105 transition-transform"
-                    >
-                      <ChevronRight className="w-5 h-5" strokeWidth={2} />
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
 
