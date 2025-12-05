@@ -366,6 +366,13 @@ export default function ProductPage() {
     }
   }, [])
 
+  // Always show sticky CTA on products without selectable plans (e.g., Trading Hub)
+  useEffect(() => {
+    if (product && !product.plans) {
+      setCanShowStickyBuy(true)
+    }
+  }, [product])
+
   if (!product) {
     return (
       <div className="min-h-screen bg-white">
