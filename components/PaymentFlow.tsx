@@ -11,6 +11,9 @@ interface PaymentFlowProps {
 }
 
 export default function PaymentFlow({ productName, selectedPlan, selectedValidity, totalPrice, whatsappNumber = 'your_number' }: PaymentFlowProps) {
+  const whatsappNumberToUse = whatsappNumber === 'your_number'
+    ? (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919876543210')
+    : whatsappNumber
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(2)
   const [selectedPayment, setSelectedPayment] = useState('')
   const [paymentProof, setPaymentProof] = useState<string | null>(null)
@@ -53,7 +56,7 @@ export default function PaymentFlow({ productName, selectedPlan, selectedValidit
   const handleFinish = () => {
     if (!verified) return
     const message = `Hi! I want to buy: ${productName}\nPlan: ${selectedPlan}\nValidity: ${selectedValidity}\nPayment Method: ${selectedPayment}\nTotal: ₹${totalPrice}\nProof: uploaded screenshot`
-    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+    const url = `https://wa.me/${whatsappNumberToUse}?text=${encodeURIComponent(message)}`
     window.open(url, '_blank')
   }
 

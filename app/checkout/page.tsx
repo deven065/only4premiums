@@ -16,10 +16,17 @@ function CheckoutContent() {
   const validity = searchParams.get('validity') || ''
   const price = parseFloat(searchParams.get('price') || '0')
   const productImage = searchParams.get('image') || ''
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919876543210'
 
   const [step, setStep] = useState<'information' | 'payment' | 'finish'>('information')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'crypto' | null>(null)
+  const [paymentProof, setPaymentProof] = useState<string | null>(null)
+  const [proofError, setProofError] = useState('')
+  const [isSendingProof, setIsSendingProof] = useState(false)
+  const [proofEmailSent, setProofEmailSent] = useState(false)
+  const [orderId, setOrderId] = useState('')
+  const [proofFileName, setProofFileName] = useState('No file chosen')
   const [formData, setFormData] = useState({
     email: '',
     fullName: '',
@@ -70,6 +77,19 @@ function CheckoutContent() {
     }
   }
 
+  const getPaymentMethodLabel = () => {
+    if (paymentMethod === 'upi') return 'UPI Payment'
+    if (paymentMethod === 'crypto') return 'Crypto Payment'
+    return 'Not selected'
+  }
+
+  const resolveOrderId = () => {
+    if (orderId) return orderId
+    const generated = `ORD-${Date.now()}`
+    setOrderId(generated)
+    return generated
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -102,7 +122,13 @@ function CheckoutContent() {
       })
 
       if (response.ok) {
+        const result = await response.json()
+        setOrderId(result.orderId || resolveOrderId())
         setStep('payment')
+        setPaymentProof(null)
+        setProofEmailSent(false)
+        setProofError('')
+        setProofFileName('No file chosen')
       } else {
         throw new Error('Failed to submit')
       }
@@ -114,27 +140,93 @@ function CheckoutContent() {
     }
   }
 
-  const handleFinish = () => {
-    const paymentMethodText = paymentMethod === 'upi' ? 'UPI Payment' : 'Crypto Payment'
-    const message = `🛒 *New Order from Only4Premiums*\n\n` +
-      `👤 *Customer Details:*\n` +
-      `Name: ${formData.fullName}\n` +
-      `Email: ${formData.email}\n` +
-      `Country: ${formData.country}\n` +
-      `State: ${formData.state}\n` +
-      `WhatsApp: ${formData.whatsappNumber}\n\n` +
-      `📦 *Product Details:*\n` +
-      `Product: ${productName}\n` +
-      (plan ? `Plan: ${plan}\n` : '') +
-      (validity ? `Validity: ${validity}\n` : '') +
-      `💰 Price: ₹${price}\n` +
-      `💳 Payment Method: ${paymentMethodText}\n\n` +
-      `I have completed the payment and want to confirm my purchase!`
+  const handleProofChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) {
+      setPaymentProof(null)
+      setProofError('')
+      setProofFileName('No file chosen')
+      return
+    }
 
-    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919876543210'
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
-    window.open(whatsappUrl, '_blank')
-    window.close()
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setPaymentProof(reader.result as string)
+      setProofError('')
+      setProofFileName(file.name)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleFinish = async () => {
+    if (!paymentMethod) {
+      alert('Please select a payment method first.')
+      setStep('payment')
+      return
+    }
+
+    if (!paymentProof) {
+      setProofError('Please upload your payment screenshot before continuing to WhatsApp.')
+      return
+    }
+
+    setIsSendingProof(true)
+
+    const paymentMethodText = getPaymentMethodLabel()
+    const id = resolveOrderId()
+
+    try {
+      if (!proofEmailSent) {
+        const response = await fetch('/api/submit-lead', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...formData,
+            productName,
+            plan,
+            validity,
+            price,
+            timestamp: new Date().toISOString(),
+            paymentProof,
+            paymentMethod: paymentMethodText,
+            orderId: id
+          }),
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to send payment proof')
+        }
+
+        setProofEmailSent(true)
+      }
+
+      const message = `🛒 *New Order from Only4Premiums*\n\n` +
+        `🧾 Order ID: #${id}\n` +
+        `👤 *Customer Details:*\n` +
+        `Name: ${formData.fullName}\n` +
+        `Email: ${formData.email}\n` +
+        `Country: ${formData.country}\n` +
+        `State: ${formData.state}\n` +
+        `WhatsApp: ${formData.whatsappNumber}\n\n` +
+        `📦 *Product Details:*\n` +
+        `Product: ${productName}\n` +
+        (plan ? `Plan: ${plan}\n` : '') +
+        (validity ? `Validity: ${validity}\n` : '') +
+        `💰 Price: ₹${price}\n` +
+        `💳 Payment Method: ${paymentMethodText}\n` +
+        `📎 Proof: Attached in email\n\n` +
+        `I have completed the payment and uploaded the proof. Please confirm my purchase.`
+
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+      window.location.href = whatsappUrl
+    } catch (error) {
+      console.error('Error finalizing checkout:', error)
+      alert('Unable to complete the final step. Please try again.')
+    } finally {
+      setIsSendingProof(false)
+    }
   }
 
   if (!productName || !price) {
@@ -612,35 +704,83 @@ function CheckoutContent() {
             </div>
           ) : (
             <div className="p-6 lg:p-12 text-center">
-              <div className="max-w-md mx-auto">
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="max-w-2xl mx-auto space-y-6">
+                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
                   <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Payment Complete!</h2>
-                <p className="text-gray-600 mb-8">
-                  Thank you for your payment! Please confirm your purchase on WhatsApp to get instant access.
-                </p>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
-                  <h3 className="font-bold text-gray-900 mb-2">Final Step:</h3>
-                  <ol className="text-sm text-gray-700 space-y-2 list-decimal list-inside">
-                    <li>Click the WhatsApp button below</li>
-                    <li>Send us the payment confirmation message</li>
-                    <li>Receive instant access to <strong>{productName}</strong></li>
-                  </ol>
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold text-gray-900">Payment Complete!</h2>
+                  <p className="text-gray-600">
+                    Upload your payment screenshot so we can verify and then we will open WhatsApp with all details.
+                  </p>
+                  <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3 inline-flex items-center gap-2">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10Zm0-3a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm-1-4v-7h2v7h-2Z" />
+                    </svg>
+                    We already emailed your details. A second email will include your proof before WhatsApp opens.
+                  </div>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 text-left space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900">Upload payment screenshot</h3>
+                      <p className="text-sm text-gray-600">Attach the payment confirmation so we can verify instantly.</p>
+                    </div>
+                    {proofEmailSent && (
+                      <span className="text-xs font-semibold text-green-700 bg-green-100 border border-green-200 rounded-full px-3 py-1">Proof emailed</span>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="inline-flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium text-gray-800 cursor-pointer hover:border-gray-400 hover:bg-gray-100 transition-all w-full sm:w-auto">
+                      <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 5v14" />
+                        <path d="M5 12h14" />
+                      </svg>
+                      <span>Choose file</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProofChange}
+                        className="sr-only"
+                      />
+                    </label>
+                    <p className="text-xs text-gray-600">{proofFileName}</p>
+                    {paymentProof && (
+                      <div className="relative inline-block border border-gray-200 rounded-lg overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={paymentProof} alt="Payment proof" className="w-48 h-48 object-cover" />
+                      </div>
+                    )}
+                    {proofError && <p className="text-sm text-red-600">{proofError}</p>}
+                    <div className="text-xs text-gray-600">
+                      We will send the payment proof to your email and then redirect you to WhatsApp with your order ID and payment details.
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+                  <h3 className="font-bold text-gray-900 mb-2">Order summary</h3>
+                  <p className="text-sm text-gray-700"><strong>Product:</strong> {productName}</p>
+                  {plan && <p className="text-sm text-gray-700"><strong>Plan:</strong> {plan}</p>}
+                  {validity && <p className="text-sm text-gray-700"><strong>Validity:</strong> {validity}</p>}
+                  <p className="text-sm text-gray-700"><strong>Payment Method:</strong> {getPaymentMethodLabel()}</p>
+                  {orderId && <p className="text-sm text-gray-700"><strong>Order ID:</strong> #{orderId}</p>}
                 </div>
 
                 <button
                   onClick={handleFinish}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-lg font-bold text-lg transition-all flex items-center justify-center space-x-2 mb-4"
+                  disabled={isSendingProof}
+                  className={`w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-lg font-bold text-lg transition-all flex items-center justify-center space-x-2 mb-2 ${isSendingProof ? 'opacity-80 cursor-wait' : ''}`}
                 >
                   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="white">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                   </svg>
-                  <span>Continue to WhatsApp</span>
+                  <span>{isSendingProof ? 'Sending proof & opening WhatsApp...' : 'Send proof & continue to WhatsApp'}</span>
                 </button>
 
                 <button

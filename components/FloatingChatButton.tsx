@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { MessageCircle, X } from 'lucide-react'
 
 export default function FloatingChatButton() {
+  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
 
   // Configure your links here - set to empty string '' to disable
@@ -12,6 +14,11 @@ export default function FloatingChatButton() {
 
   const hasWhatsApp = whatsappNumber.length > 0 && whatsappNumber !== 'your_number'
   const hasTelegram = telegramLink.length > 0 && telegramLink.includes('t.me/')
+
+  // Hide on checkout to avoid covering the WhatsApp CTA
+  if (pathname?.startsWith('/checkout')) {
+    return null
+  }
 
   // Don't show button if no contact methods are configured
   if (!hasWhatsApp && !hasTelegram) {
