@@ -122,28 +122,6 @@ export default function ComparisonTable() {
           </div>
         </div>
 
-        {/* Mobile Details */}
-        <div className="mt-6 sm:hidden bg-gray-50 rounded-lg p-4">
-          <h3 className="text-sm font-bold text-gray-900 mb-4 text-center">What You Get</h3>
-          <div className="space-y-3">
-            {comparisons.map((item, index) => (
-              <div key={index} className="bg-white rounded-md p-3 border border-gray-200">
-                <div className="font-semibold text-gray-900 mb-2 text-sm">{item.feature}</div>
-                <div className="space-y-1.5 text-xs">
-                  <div className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold shrink-0">✓</span>
-                    <span className="text-gray-700"><span className="font-semibold">Only4Premiums:</span> {item.us}</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-red-600 font-bold shrink-0">✗</span>
-                    <span className="text-gray-500"><span className="font-semibold">Others:</span> {item.others}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Bottom CTA */}
         <div className="mt-8 sm:mt-10 text-center px-2">
           <p className="text-base sm:text-xl font-semibold text-gray-900 mb-4">

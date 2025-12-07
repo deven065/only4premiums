@@ -155,15 +155,15 @@ function CheckoutContent() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white sm:bg-gray-50">
       <Header />
       
-      <main className="pt-24 sm:pt-28 pb-12 sm:pb-16">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <main className="pt-[72px] sm:pt-20 pb-0 sm:pb-12">
+        <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between mb-8">
+          <div className="bg-white border-b border-gray-100 px-4 sm:px-6 py-4 flex items-center justify-between mb-4 sm:mb-0">
             <div className="flex items-center space-x-3 sm:space-x-8">
-              <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="hidden sm:flex items-center space-x-2 sm:space-x-4">
                 <div className={`flex items-center space-x-1 sm:space-x-2 ${step === 'information' ? 'text-orange-600' : 'text-gray-400'}`}>
                   <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
                     step === 'information' ? 'border-orange-600 bg-orange-600 text-white' : 'border-gray-300'
@@ -193,27 +193,19 @@ function CheckoutContent() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="hidden sm:flex items-center space-x-2 text-blue-600">
-                <Lock className="w-4 h-4" />
-                <span className="text-sm font-medium">Secured And Encrypted</span>
-              </div>
-              <button 
-                onClick={() => window.close()}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
+            <div className="flex items-center space-x-2">
+              <Lock className="w-4 h-4 text-green-600" />
+              <span className="text-xs sm:text-sm font-medium text-green-600">Secure Checkout</span>
             </div>
           </div>
 
           {step === 'information' ? (
-            <form onSubmit={handleSubmit} className="p-6 lg:p-8">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <form onSubmit={handleSubmit} className="bg-white sm:bg-transparent px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                 {/* Left Column - Form */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Success Message */}
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start space-x-3">
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4 flex items-start space-x-3">
                     <div className="shrink-0 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mt-0.5">
                       <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -226,7 +218,7 @@ function CheckoutContent() {
 
                   {/* Customer Information */}
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Customer information</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Customer information</h2>
                     
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -247,7 +239,7 @@ function CheckoutContent() {
 
                   {/* Billing Details */}
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Billing details</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Billing details</h2>
                     
                     <div className="space-y-4">
                       <div>
@@ -349,8 +341,8 @@ function CheckoutContent() {
 
                 {/* Right Column - Order Summary */}
                 <div className="lg:col-span-1">
-                  <div className="bg-gray-50 rounded-xl p-6 sticky top-24">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">Your order</h3>
+                  <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 lg:sticky lg:top-24">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Your order</h3>
                     
                     <div className="space-y-4">
                       <div className="flex justify-between text-sm">
@@ -369,6 +361,7 @@ function CheckoutContent() {
                                     alt={productName}
                                     fill
                                     className="object-cover"
+                                    unoptimized
                                   />
                                 )}
                               </div>

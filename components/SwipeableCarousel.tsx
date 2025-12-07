@@ -14,7 +14,7 @@ interface SwipeableCarouselProps {
   className?: string
 }
 
-const swipeConfidenceThreshold = 10000
+const swipeConfidenceThreshold = 5000
 const swipePower = (offset: number, velocity: number) => {
   return Math.abs(offset) * velocity
 }
@@ -50,8 +50,8 @@ export default function SwipeableCarousel({
   const variants = {
     enter: (direction: number) => {
       return {
-        x: direction > 0 ? 1000 : -1000,
-        opacity: 0
+        x: direction > 0 ? '100%' : '-100%',
+        opacity: 1
       }
     },
     center: {
@@ -62,15 +62,15 @@ export default function SwipeableCarousel({
     exit: (direction: number) => {
       return {
         zIndex: 0,
-        x: direction < 0 ? 1000 : -1000,
-        opacity: 0
+        x: direction < 0 ? '100%' : '-100%',
+        opacity: 1
       }
     }
   }
 
   const transition = {
-    x: { type: 'spring' as const, stiffness: 300, damping: 30 },
-    opacity: { duration: 0.2 }
+    x: { type: 'spring' as const, stiffness: 400, damping: 40, mass: 0.5 },
+    opacity: { duration: 0 }
   }
 
   // Auto play functionality
@@ -99,7 +99,7 @@ export default function SwipeableCarousel({
             transition={transition}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={1}
+            dragElastic={0.2}
             onDragEnd={handleDragEnd}
             className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
           >

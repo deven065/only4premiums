@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import PaymentFlow from './PaymentFlow'
 
 interface ProductPlan {
   name: string
@@ -16,45 +15,15 @@ interface ProductPlanSelectorProps {
   productImage?: string
 }
 
-export default function ProductPlanSelector({ plans, productName }: ProductPlanSelectorProps) {
+export default function ProductPlanSelector({ plans, productName, productImage }: ProductPlanSelectorProps) {
   // Check if this is LuxAlgo or FxReplay product
   const isLuxAlgo = productName.toLowerCase().includes('luxalgo')
   const isFxReplay = productName.toLowerCase().includes('fxreplay')
   const [selectedPlan, setSelectedPlan] = useState(isLuxAlgo ? 'Premium' : plans[0]?.name || '')
   const [selectedValidity, setSelectedValidity] = useState('')
-  const [showPayment, setShowPayment] = useState(false)
-
-  const handleBuyNow = useCallback(() => {
-    if (!selectedPlan || !selectedValidity) {
-      alert('Please select a plan and validity')
-      return
-    }
-    setShowPayment(true)
-  }, [selectedPlan, selectedValidity])
-
-  // Notify page when selection is ready
-  useEffect(() => {
-    const ready = Boolean(selectedPlan) && Boolean(selectedValidity)
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('buy-ready', { detail: ready }))
-    }
-  }, [selectedPlan, selectedValidity])
-
-  // Listen for an external buy trigger (used by sticky CTA buttons)
-  useEffect(() => {
-    const onTrigger = () => handleBuyNow()
-    if (typeof window !== 'undefined') {
-      window.addEventListener('trigger-buy-now', onTrigger as EventListener)
-    }
-    return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('trigger-buy-now', onTrigger as EventListener)
-      }
-    }
-  }, [handleBuyNow])
 
   // Calculate savings based on selected plan and validity
-  const calculateSavings = () => {
+  const calculateSavings = useCallback(() => {
     if (!selectedPlan || !selectedValidity) return null
 
     if (isLuxAlgo) {
@@ -118,7 +87,38 @@ export default function ProductPlanSelector({ plans, productName }: ProductPlanS
         validityLabel: selectedValidity.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())
       }
     }
-  }
+  }, [selectedPlan, selectedValidity, plans, isLuxAlgo, isFxReplay])
+
+  const handleBuyNow = useCallback(() => {
+    if (!selectedPlan || !selectedValidity) {
+      alert('Please select a plan and validity')
+      return
+    }
+    const savingsData = calculateSavings()
+    const checkoutUrl = `/checkout?product=${encodeURIComponent(productName)}&plan=${encodeURIComponent(selectedPlan)}&validity=${encodeURIComponent(selectedValidity)}&price=${savingsData?.totalPrice || 0}&image=${encodeURIComponent(productImage || '')}`
+    window.open(checkoutUrl, '_blank')
+  }, [selectedPlan, selectedValidity, productName, productImage, calculateSavings])
+
+  // Notify page when selection is ready
+  useEffect(() => {
+    const ready = Boolean(selectedPlan) && Boolean(selectedValidity)
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('buy-ready', { detail: ready }))
+    }
+  }, [selectedPlan, selectedValidity])
+
+  // Listen for an external buy trigger (used by sticky CTA buttons)
+  useEffect(() => {
+    const onTrigger = () => handleBuyNow()
+    if (typeof window !== 'undefined') {
+      window.addEventListener('trigger-buy-now', onTrigger as EventListener)
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('trigger-buy-now', onTrigger as EventListener)
+      }
+    }
+  }, [handleBuyNow])
 
   const savingsData = calculateSavings()
 
@@ -239,21 +239,12 @@ export default function ProductPlanSelector({ plans, productName }: ProductPlanS
         </div>
       )}
 
-      {!showPayment ? (
-        <button 
-          onClick={handleBuyNow}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-bold text-lg transition-all"
-        >
-          Buy Now
-        </button>
-      ) : (
-        <PaymentFlow
-          productName={productName}
-          selectedPlan={selectedPlan}
-          selectedValidity={savingsData?.validityLabel || selectedValidity}
-          totalPrice={savingsData?.totalPrice || 0}
-        />
-      )}
+      <button 
+        onClick={handleBuyNow}
+        className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-bold text-lg transition-all"
+      >
+        Buy Now
+      </button>
 
     </div>
   )
