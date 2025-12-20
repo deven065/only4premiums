@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Lock, X } from 'lucide-react'
 import Image from 'next/image'
@@ -18,9 +18,10 @@ function CheckoutContent() {
   const productImage = searchParams.get('image') || ''
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919876543210'
 
-  const [step, setStep] = useState<'information' | 'payment' | 'finish'>('information')
+  const [step, setStep] = useState<'information' | 'payment' | 'finish' | 'thankyou'>('information')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'crypto' | null>(null)
+  const qrCodeRef = useRef<HTMLDivElement>(null)
   const [paymentProof, setPaymentProof] = useState<string | null>(null)
   const [proofError, setProofError] = useState('')
   const [isSendingProof, setIsSendingProof] = useState(false)
@@ -219,8 +220,14 @@ function CheckoutContent() {
         `📎 Proof: Attached in email\n\n` +
         `I have completed the payment and uploaded the proof. Please confirm my purchase.`
 
-      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
-      window.location.href = whatsappUrl
+      // Open thank you page in new tab with order details
+      const thankYouUrl = `/thank-you?orderId=${encodeURIComponent(id)}&product=${encodeURIComponent(productName)}&plan=${encodeURIComponent(plan || '')}&validity=${encodeURIComponent(validity || '')}&price=${encodeURIComponent(price)}&paymentMethod=${encodeURIComponent(paymentMethod || '')}&name=${encodeURIComponent(formData.fullName)}`
+      window.open(thankYouUrl, '_blank')
+      
+      // Optionally redirect current tab to home or keep on checkout
+      setTimeout(() => {
+        router.push('/')
+      }, 1000)
     } catch (error) {
       console.error('Error finalizing checkout:', error)
       alert('Unable to complete the final step. Please try again.')
@@ -283,11 +290,6 @@ function CheckoutContent() {
                   <span className="text-xs sm:text-sm font-medium hidden xs:inline">Finish</span>
                 </div>
               </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Lock className="w-4 h-4 text-green-600" />
-              <span className="text-xs sm:text-sm font-medium text-green-600">Secure Checkout</span>
             </div>
           </div>
 
@@ -503,7 +505,12 @@ function CheckoutContent() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 mb-3 sm:mb-6">
                   {/* UPI Payment Option */}
                   <div 
-                    onClick={() => setPaymentMethod('upi')}
+                    onClick={() => {
+                      setPaymentMethod('upi')
+                      setTimeout(() => {
+                        qrCodeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                      }, 100)
+                    }}
                     className={`cursor-pointer border-2 rounded-2xl p-4 sm:p-6 transition-all hover:shadow-xl ${
                       paymentMethod === 'upi' 
                         ? 'border-orange-500 bg-orange-50 shadow-lg' 
@@ -567,7 +574,7 @@ function CheckoutContent() {
 
                 {/* Payment Details */}
                 {paymentMethod && (
-                  <div className="bg-gradient-to-r from-orange-50 to-pink-50 border-2 border-orange-200 rounded-2xl p-4 sm:p-8 mb-4 sm:mb-6 animate-fadeInUp">
+                  <div ref={qrCodeRef} className="bg-gradient-to-r from-orange-50 to-pink-50 border-2 border-orange-200 rounded-2xl p-4 sm:p-8 mb-4 sm:mb-6 animate-fadeInUp">
                     {paymentMethod === 'upi' ? (
                       <div className="text-center">
                         <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 px-2 sm:px-4">Scan QR Code or Use UPI ID</h3>

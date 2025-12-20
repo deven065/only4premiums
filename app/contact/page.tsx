@@ -3,6 +3,8 @@ import Footer from '@/components/Footer'
 import { Mail, Clock, MapPin } from 'lucide-react'
 
 export default function ContactPage() {
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919876543210'
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-purple-50">
       <Header />
@@ -73,6 +75,25 @@ export default function ContactPage() {
                     <p className="text-[#0088cc] font-medium">@only4premiums_support</p>
                   </div>
                 </a>
+
+                {/* WhatsApp */}
+                <a 
+                  href={`https://wa.me/${whatsappNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start space-x-4 p-6 bg-white rounded-2xl shadow-lg border-2 border-gray-100 hover:border-[#25D366] hover:shadow-xl transition-all group"
+                >
+                  <div className="flex items-center justify-center w-14 h-14 bg-[#25D366] rounded-2xl shrink-0">
+                    <svg className="h-7 w-7" viewBox="0 0 24 24" fill="white">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.47-.148-.669.15-.198.297-.768.967-.94 1.165-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004c-1.052 0-2.082.256-2.986.74L7.04 3.061 3.712 7.8c-.52 1.364-.827 2.802-.827 4.3 0 5.517 4.484 10 10 10 1.499 0 2.931-.308 4.291-.817l3.71-1.635-4.771-3.35c.484-.905.74-1.922.74-2.986 0-3.314-2.686-6-6-6z"/>
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-gray-900 mb-1 group-hover:text-[#25D366] transition-colors text-lg">Chat on WhatsApp</h3>
+                    <p className="text-gray-600 text-sm mb-2">Quick messaging support</p>
+                    <p className="text-[#25D366] font-medium">+91 9876543210</p>
+                  </div>
+                </a>
               </div>
 
               {/* Additional Info */}
@@ -132,6 +153,17 @@ export default function ContactPage() {
                     <path d="M94.9297 148.838L91.3906 195.273C96.5156 195.273 98.7656 193.023 101.516 190.273L123.141 169.398L167.766 202.023C176.391 206.773 182.641 204.398 185.016 193.898L215.891 64.3984L215.953 64.3359C218.703 51.2734 211.203 46.5234 202.828 49.8984L28.8281 118.148C16.2656 123.148 16.3281 130.523 26.9531 133.898L69.2031 147.648L173.516 84.6484C178.391 81.5234 182.891 83.3984 179.266 86.5234"/>
                   </svg>
                   Telegram Chat
+                </a>
+                <a 
+                  href={`https://wa.me/${whatsappNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:from-[#128C7E] hover:to-[#0fa086] text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl"
+                >
+                  <svg className="inline h-5 w-5 mr-2" viewBox="0 0 24 24" fill="white">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.47-.148-.669.15-.198.297-.768.967-.94 1.165-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004c-1.052 0-2.082.256-2.986.74L7.04 3.061 3.712 7.8c-.52 1.364-.827 2.802-.827 4.3 0 5.517 4.484 10 10 10 1.499 0 2.931-.308 4.291-.817l3.71-1.635-4.771-3.35c.484-.905.74-1.922.74-2.986 0-3.314-2.686-6-6-6z"/>
+                  </svg>
+                  WhatsApp Chat
                 </a>
               </div>
 

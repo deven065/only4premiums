@@ -9,7 +9,7 @@ export default function FloatingChatButton() {
   const [isOpen, setIsOpen] = useState(false)
 
   // Configure your links here - set to empty string '' to disable
-  const whatsappNumber: string = '' // Format: '1234567890' (phone number without + or spaces)
+  const whatsappNumber: string = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919876543210' // Format: '1234567890' (phone number without + or spaces)
   const telegramLink: string = 'https://t.me/only4premiums_support' // Full Telegram link
 
   const hasWhatsApp = whatsappNumber.length > 0 && whatsappNumber !== 'your_number'
