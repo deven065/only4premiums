@@ -5,10 +5,10 @@ export default function Footer() {
   return (
     <footer id="contact" className="bg-gray-900 text-gray-300 border-t border-gray-800">
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        {/* Top Section - Brand & Contact */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 pb-8 border-b border-gray-800">
+        {/* Top Section - Brand, Contact & Quick Links */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 pb-8 border-b border-gray-800">
           {/* Brand Section */}
-          <div>
+          <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center space-x-2 mb-3">
               <Image 
                 src="/only4premiums.png" 
@@ -77,39 +77,15 @@ export default function Footer() {
               </a>
             </div>
           </div>
-        </div>
 
-        {/* Bottom Section - Links */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mb-8">
           {/* Quick Links */}
-          <div>
+          <div className="md:pl-8">
             <h4 className="text-sm font-bold text-white mb-3 uppercase tracking-wider">Quick Links</h4>
             <ul className="space-y-2">
               <li><Link href="/" className="text-gray-400 hover:text-white transition-colors text-sm">Home</Link></li>
               <li><Link href="/products" className="text-gray-400 hover:text-white transition-colors text-sm">Products</Link></li>
               <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors text-sm">About</Link></li>
               <li><Link href="/contact" className="text-gray-400 hover:text-white transition-colors text-sm">Contact</Link></li>
-            </ul>
-          </div>
-
-          {/* Products */}
-          <div>
-            <h4 className="text-sm font-bold text-white mb-3 uppercase tracking-wider">Products</h4>
-            <ul className="space-y-2">
-              <li><Link href="/" className="text-gray-400 hover:text-white transition-colors text-sm">TradingView</Link></li>
-              <li><Link href="/products" className="text-gray-400 hover:text-white transition-colors text-sm">Design Tools</Link></li>
-              <li><Link href="/products" className="text-gray-400 hover:text-white transition-colors text-sm">Entertainment</Link></li>
-              <li><Link href="/products" className="text-gray-400 hover:text-white transition-colors text-sm">Education</Link></li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h4 className="text-sm font-bold text-white mb-3 uppercase tracking-wider">Legal</h4>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Privacy Policy</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Terms of Service</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Refund Policy</a></li>
             </ul>
           </div>
         </div>
