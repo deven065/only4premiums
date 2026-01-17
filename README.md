@@ -5,7 +5,7 @@
   
    Premium subscriptions and courses at unbeatable prices
   
-   [Live Demo](https://only4premiums.vercel.app) · [Issues](https://github.com/deven065/only4premiums/issues)
+   [Live Demo](https://only4premiums.vercel.app) · [Issues](https://github.com/ffson3465-alt/only4premiums/issues)
 </div>
 
 ---
